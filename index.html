@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VM-tipset 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">VM 2026</p>
+          <h1>VM-tipset</h1>
+        </div>
+        <nav class="tabs" aria-label="Vyer">
+          <button class="tab-button is-active" type="button" data-view="leaderboard">Tabell</button>
+          <button class="tab-button" type="button" data-view="matches">Matcher</button>
+        </nav>
+      </header>
+
+      <main>
+        <section class="view is-active" id="leaderboard-view">
+          <div class="hero-grid">
+            <section class="panel leaderboard-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Ställning</p>
+                  <h2>Poängtabell</h2>
+                </div>
+                <p class="muted">3p för rätt 1X2, +2p för exakt resultat.</p>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Spelare</th>
+                      <th>Poäng</th>
+                      <th>1X2</th>
+                      <th>Exakta</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderboard-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="panel score-panel">
+              <p class="eyebrow">Livekoll</p>
+              <h2 id="played-count">0/72</h2>
+              <p class="muted">Gruppspelsmatcher med inlagt slutresultat.</p>
+              <div class="stat-row">
+                <span>Matcher</span>
+                <strong>72</strong>
+              </div>
+              <div class="stat-row">
+                <span>Deltagare</span>
+                <strong>9</strong>
+              </div>
+              <div class="stat-row">
+                <span>Max gruppspel</span>
+                <strong>360p</strong>
+              </div>
+              <div class="live-fixtures">
+                <section class="fixture-block">
+                  <div class="fixture-heading">
+                    <span>Dagens matcher</span>
+                    <strong id="today-count">0</strong>
+                  </div>
+                  <div class="mini-match-list" id="today-matches"></div>
+                </section>
+                <section class="fixture-block">
+                  <div class="fixture-heading">
+                    <span>Morgondagens matcher</span>
+                    <strong id="tomorrow-count">0</strong>
+                  </div>
+                  <div class="mini-match-list" id="tomorrow-matches"></div>
+                </section>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="matches-view">
+          <section class="matches-header">
+            <div>
+              <p class="eyebrow">Gruppspel</p>
+              <h2>Alla matcher</h2>
+            </div>
+            <div class="filters" aria-label="Gruppfilter">
+              <button class="filter-button is-active" type="button" data-group="all">Alla</button>
+            </div>
+          </section>
+          <div class="match-list" id="match-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="match-dialog" id="match-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow" id="dialog-meta"></p>
+          <h2 id="dialog-title"></h2>
+        </div>
+        <button class="icon-button" id="close-dialog" type="button" aria-label="Stäng">×</button>
+      </div>
+      <div class="dialog-score" id="dialog-score"></div>
+      <div class="tips-list" id="tips-list"></div>
+    </dialog>
+
+    <dialog class="match-dialog player-dialog" id="player-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow" id="player-dialog-meta"></p>
+          <h2 id="player-dialog-title"></h2>
+        </div>
+        <button class="icon-button" id="close-player-dialog" type="button" aria-label="Stäng">×</button>
+      </div>
+      <div class="player-summary" id="player-summary"></div>
+      <div class="player-picks" id="player-picks"></div>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
