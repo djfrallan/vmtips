@@ -802,6 +802,154 @@ function playerStats(player) {
   );
 }
 
+function submittedCount(player) {
+  return matches.filter((match) => predictions[player][match.number]).length;
+}
+
+function simulationPlayers() {
+  const submitted = players.filter((player) => submittedCount(player) > 0);
+  return submitted.length ? submitted : players;
+}
+
+function emptyTeamRow(team) {
+  return {
+    team,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+  };
+}
+
+function calculateGroupTables(player) {
+  const tables = Object.fromEntries(
+    [...new Set(matches.map((match) => match.group))].map((group) => [group, {}])
+  );
+
+  matches.forEach((match) => {
+    if (!tables[match.group][match.home]) tables[match.group][match.home] = emptyTeamRow(match.home);
+    if (!tables[match.group][match.away]) tables[match.group][match.away] = emptyTeamRow(match.away);
+
+    const prediction = predictions[player][match.number];
+    if (!prediction) return;
+
+    const home = tables[match.group][match.home];
+    const away = tables[match.group][match.away];
+    home.played += 1;
+    away.played += 1;
+    home.goalsFor += prediction.home;
+    home.goalsAgainst += prediction.away;
+    away.goalsFor += prediction.away;
+    away.goalsAgainst += prediction.home;
+
+    if (prediction.home > prediction.away) {
+      home.wins += 1;
+      away.losses += 1;
+      home.points += 3;
+    } else if (prediction.home < prediction.away) {
+      away.wins += 1;
+      home.losses += 1;
+      away.points += 3;
+    } else {
+      home.draws += 1;
+      away.draws += 1;
+      home.points += 1;
+      away.points += 1;
+    }
+  });
+
+  return Object.fromEntries(
+    Object.entries(tables).map(([group, teams]) => [
+      group,
+      Object.values(teams)
+        .map((team) => ({
+          ...team,
+          goalDifference: team.goalsFor - team.goalsAgainst,
+        }))
+        .sort(
+          (a, b) =>
+            b.points - a.points ||
+            b.goalDifference - a.goalDifference ||
+            b.goalsFor - a.goalsFor ||
+            a.team.localeCompare(b.team, "sv")
+        ),
+    ])
+  );
+}
+
+function renderSimulationTabs(activePlayer = simulationPlayers()[0]) {
+  const container = document.querySelector("#sim-player-tabs");
+  container.innerHTML = simulationPlayers()
+    .map(
+      (player) => `
+        <button class="sim-player-button ${player === activePlayer ? "is-active" : ""}" type="button" data-player="${player}">
+          ${player}
+        </button>
+      `
+    )
+    .join("");
+}
+
+function renderSimulation(player = simulationPlayers()[0]) {
+  const tables = calculateGroupTables(player);
+  const count = submittedCount(player);
+  renderSimulationTabs(player);
+  document.querySelector("#simulation-summary").innerHTML = `
+    <strong>${player}</strong>
+    <span class="muted">${count}/${matches.length} tips används i simuleringen.</span>
+  `;
+  document.querySelector("#simulation-grid").innerHTML = Object.entries(tables)
+    .sort(([groupA], [groupB]) => groupA.localeCompare(groupB, "sv"))
+    .map(
+      ([group, teams]) => `
+        <section class="group-table-card">
+          <div class="group-table-heading">
+            <strong>Grupp ${group}</strong>
+            <span>${teams.length} lag</span>
+          </div>
+          <table class="sim-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Lag</th>
+                <th>P</th>
+                <th>MS</th>
+                <th>GM</th>
+                <th>Po</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${teams
+                .map(
+                  (team, index) => `
+                    <tr>
+                      <td><span class="rank">${index + 1}</span></td>
+                      <td>
+                        <span class="sim-team">
+                          <span>${flags[team.team] || ""}</span>
+                          <span>${team.team}</span>
+                        </span>
+                      </td>
+                      <td>${team.played}</td>
+                      <td>${team.goalDifference > 0 ? "+" : ""}${team.goalDifference}</td>
+                      <td>${team.goalsFor}</td>
+                      <td>${team.points}</td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </section>
+      `
+    )
+    .join("");
+}
+
 function renderFilters() {
   const filters = document.querySelector(".filters");
   const groups = [...new Set(matches.map((match) => match.group))];
@@ -946,6 +1094,12 @@ document.querySelector("#leaderboard-body").addEventListener("click", (event) =>
   openPlayer(button.dataset.player);
 });
 
+document.querySelector("#sim-player-tabs").addEventListener("click", (event) => {
+  const button = event.target.closest(".sim-player-button");
+  if (!button) return;
+  renderSimulation(button.dataset.player);
+});
+
 document.querySelector("#close-dialog").addEventListener("click", () => {
   document.querySelector("#match-dialog").close();
 });
@@ -957,3 +1111,4 @@ document.querySelector("#close-player-dialog").addEventListener("click", () => {
 renderFilters();
 renderLeaderboard();
 renderMatches();
+renderSimulation();

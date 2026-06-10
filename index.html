@@ -19,6 +19,7 @@
         <nav class="tabs" aria-label="Vyer">
           <button class="tab-button is-active" type="button" data-view="leaderboard">Tabell</button>
           <button class="tab-button" type="button" data-view="matches">Matcher</button>
+          <button class="tab-button" type="button" data-view="simulation">Simulation</button>
         </nav>
       </header>
 
@@ -96,6 +97,18 @@
             </div>
           </section>
           <div class="match-list" id="match-list"></div>
+        </section>
+
+        <section class="view" id="simulation-view">
+          <section class="matches-header">
+            <div>
+              <p class="eyebrow">Simulation</p>
+              <h2>Gruppställning enligt tips</h2>
+            </div>
+            <div class="sim-player-tabs" id="sim-player-tabs" aria-label="Välj spelare"></div>
+          </section>
+          <div class="simulation-summary" id="simulation-summary"></div>
+          <div class="simulation-grid" id="simulation-grid"></div>
         </section>
       </main>
     </div>
