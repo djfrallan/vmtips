@@ -745,7 +745,7 @@ function renderLeaderboard() {
             <span class="player-cell">
               <button class="player-button" type="button" data-player="${row.player}">
                 <span class="avatar">${row.player.slice(0, 1)}</span>
-                ${row.player}
+                <span class="player-name">${row.player}</span>
               </button>
             </span>
           </td>
