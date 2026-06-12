@@ -187,6 +187,21 @@ tbody tr:last-child td {
   border-bottom: 0;
 }
 
+.podium-1 {
+  --podium-border: rgba(245, 188, 66, 0.55);
+  --podium-text: #ffd978;
+}
+
+.podium-2 {
+  --podium-border: rgba(198, 208, 222, 0.5);
+  --podium-text: #dfe7f2;
+}
+
+.podium-3 {
+  --podium-border: rgba(202, 129, 75, 0.5);
+  --podium-text: #e6a06b;
+}
+
 .rank {
   width: 34px;
   height: 34px;
@@ -195,6 +210,12 @@ tbody tr:last-child td {
   border-radius: 50%;
   background: var(--surface-2);
   color: var(--muted);
+}
+
+.podium-rank {
+  border: 1px solid var(--podium-border);
+  background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.18), transparent 34%), rgba(255, 255, 255, 0.06);
+  color: var(--podium-text);
 }
 
 .player-cell {
@@ -293,8 +314,6 @@ tbody tr:last-child td {
 }
 
 .mini-match-card {
-  display: grid;
-  gap: 6px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
@@ -304,21 +323,52 @@ tbody tr:last-child td {
   text-align: left;
 }
 
+.mini-match-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
 .mini-match-card:hover {
   border-color: rgba(54, 211, 153, 0.38);
   background: rgba(255, 255, 255, 0.07);
 }
 
 .mini-match-time {
+  display: block;
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 800;
+  margin-bottom: 5px;
 }
 
 .mini-match-teams {
+  display: block;
   font-size: 0.9rem;
   font-weight: 800;
   line-height: 1.35;
+}
+
+.mini-result-pill {
+  min-width: 58px;
+  min-height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0 8px;
+  text-align: center;
+}
+
+.mini-result-pill.has-result {
+  border-color: rgba(54, 211, 153, 0.38);
+  background: rgba(54, 211, 153, 0.1);
+  color: var(--text);
 }
 
 .empty-fixtures {
@@ -329,6 +379,25 @@ tbody tr:last-child td {
 
 .matches-header {
   margin-bottom: 18px;
+}
+
+.match-toggle {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.match-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .sim-player-tabs {
@@ -517,11 +586,27 @@ tbody tr:last-child td {
   align-items: center;
   justify-content: center;
   min-width: 70px;
+  max-width: 100%;
   min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
+  padding: 0 10px;
   font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+}
+
+.result-pill.has-goals {
+  border-color: rgba(54, 211, 153, 0.38);
+  background: rgba(54, 211, 153, 0.1);
+  cursor: help;
+}
+
+.result-pill.is-pending {
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .match-dialog {
@@ -815,8 +900,16 @@ tbody tr:last-child td {
     padding: 12px;
   }
 
+  .mini-match-main {
+    grid-template-columns: 1fr;
+  }
+
   .mini-match-teams {
     font-size: 0.95rem;
+  }
+
+  .mini-result-pill {
+    justify-self: start;
   }
 
   .matches-header {
@@ -862,6 +955,10 @@ tbody tr:last-child td {
     gap: 6px;
   }
 
+  .match-toggle {
+    justify-content: flex-start;
+  }
+
   .filter-button {
     font-size: 0.82rem;
   }
@@ -889,7 +986,7 @@ tbody tr:last-child td {
 
   .result-pill {
     min-height: 30px;
-    min-width: 64px;
+    min-width: 0;
     font-size: 0.9rem;
   }
 

@@ -136,10 +136,56 @@ const schedule = [
   ["J", 70, "2026-06-28", "04:00", "Jordanien", "Argentina", "AT&T Stadium, Arlington"],
 ];
 
-const results = {
-  // Fyll i slutresultat här, t.ex. 1: { home: 2, away: 1 }.
-  1: { home: 2, away: 0 },
-  2: { home: 2, away: 1 },
+const remoteResultsUrl = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
+
+const remoteTeamNames = {
+  Algeria: "Algeriet",
+  Argentina: "Argentina",
+  Australia: "Australien",
+  Austria: "Österrike",
+  Belgium: "Belgien",
+  "Bosnia & Herzegovina": "Bosnien och Hercegovina",
+  Brazil: "Brasilien",
+  Canada: "Canada",
+  "Cape Verde": "Kap Verde",
+  Colombia: "Colombia",
+  Croatia: "Kroatien",
+  "Czech Republic": "Tjeckien",
+  "DR Congo": "DR Kongo",
+  Ecuador: "Ecuador",
+  Egypt: "Egypten",
+  England: "England",
+  France: "Frankrike",
+  Germany: "Tyskland",
+  Ghana: "Ghana",
+  Haiti: "Haiti",
+  Iran: "Iran",
+  Iraq: "Irak",
+  "Ivory Coast": "Elfenbenskusten",
+  Japan: "Japan",
+  Jordan: "Jordanien",
+  Mexico: "Mexico",
+  Morocco: "Marocko",
+  Netherlands: "Nederländerna",
+  "New Zealand": "Nya Zeeland",
+  Norway: "Norge",
+  Panama: "Panama",
+  Paraguay: "Paraguay",
+  Portugal: "Portugal",
+  Qatar: "Qatar",
+  "Saudi Arabia": "Saudiarabien",
+  Scotland: "Skottland",
+  Senegal: "Senegal",
+  "South Africa": "Sydafrika",
+  "South Korea": "Sydkorea",
+  Spain: "Spanien",
+  Sweden: "Sverige",
+  Switzerland: "Schweiz",
+  Tunisia: "Tunisien",
+  Turkey: "Turkiet",
+  USA: "USA",
+  Uruguay: "Uruguay",
+  Uzbekistan: "Uzbekistan",
 };
 
 const matches = schedule.map(([group, number, date, time, home, away, venue]) => ({
@@ -150,7 +196,8 @@ const matches = schedule.map(([group, number, date, time, home, away, venue]) =>
   home,
   away,
   venue,
-  result: results[number] || null,
+  result: null,
+  goals: [],
 }));
 
 const submittedPredictions = {
@@ -849,8 +896,107 @@ function scoreText(score) {
   return score ? `${score.home}-${score.away}` : "Ej spelad";
 }
 
+function matchStartDate(match) {
+  return new Date(`${match.date}T${match.time}:00`);
+}
+
+function matchStatusText(match) {
+  if (match.result) return scoreText(match.result);
+
+  const now = new Date();
+  const start = matchStartDate(match);
+  const twoHoursAfterStart = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+  if (now >= start && now < twoHoursAfterStart) return "Match pågår";
+  if (now >= twoHoursAfterStart) return "Resultat ej syncat";
+  return "Ej spelad";
+}
+
+function compactMatchStatusText(match) {
+  const status = matchStatusText(match);
+  if (status === "Match pågår") return "Pågår";
+  if (status === "Resultat ej syncat") return "Ej syncat";
+  return status;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function teamLabel(team) {
   return `${flags[team] || ""} ${team}`.trim();
+}
+
+function matchKey(home, away) {
+  return `${home}__${away}`;
+}
+
+function remoteGoalEntries(goals, team) {
+  if (!Array.isArray(goals)) return [];
+  return goals
+    .filter((goal) => goal && typeof goal.name === "string")
+    .map((goal) => ({
+      team,
+      name: goal.name,
+      minute: typeof goal.minute === "string" || typeof goal.minute === "number" ? String(goal.minute) : "",
+    }));
+}
+
+function goalSummary(match) {
+  if (!match.goals.length) return "Inga målgörare registrerade.";
+  return match.goals
+    .map((goal) => `${goal.team}: ${goal.name}${goal.minute ? ` ${goal.minute}'` : ""}`)
+    .join("\n");
+}
+
+function resultMarkup(match) {
+  const title = match.result ? `Målgörare:\n${goalSummary(match)}` : "Slutresultat saknas i openfootball JSON.";
+  return `<span class="result-pill ${match.result ? "has-goals" : "is-pending"}" title="${escapeHtml(title)}">${matchStatusText(match)}</span>`;
+}
+
+function applyRemoteResults(data) {
+  if (!data || !Array.isArray(data.matches)) return 0;
+
+  const byTeams = Object.fromEntries(matches.map((match) => [matchKey(match.home, match.away), match]));
+  let applied = 0;
+
+  data.matches.forEach((remoteMatch) => {
+    const home = remoteTeamNames[remoteMatch.team1];
+    const away = remoteTeamNames[remoteMatch.team2];
+    const fullTime = remoteMatch.score && remoteMatch.score.ft;
+
+    if (!home || !away || !Array.isArray(fullTime) || fullTime.length !== 2) return;
+    if (!Number.isInteger(fullTime[0]) || !Number.isInteger(fullTime[1])) return;
+
+    const match = byTeams[matchKey(home, away)];
+    if (!match) return;
+
+    match.result = { home: fullTime[0], away: fullTime[1] };
+    match.goals = [
+      ...remoteGoalEntries(remoteMatch.goals1, match.home),
+      ...remoteGoalEntries(remoteMatch.goals2, match.away),
+    ];
+    applied += 1;
+  });
+
+  return applied;
+}
+
+async function loadRemoteResults() {
+  try {
+    const response = await fetch(remoteResultsUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return applyRemoteResults(data);
+  } catch (error) {
+    console.warn("Kunde inte hämta resultat från openfootball/worldcup.json", error);
+    return 0;
+  }
 }
 
 function localDateKey(date = new Date()) {
@@ -890,7 +1036,7 @@ function renderLeaderboard() {
     .map(
       (row, index) => `
         <tr>
-          <td><span class="rank">${index + 1}</span></td>
+          <td><span class="rank ${index < 3 ? `podium-rank podium-${index + 1}` : ""}">${index + 1}</span></td>
           <td>
             <span class="player-cell">
               <button class="player-button" type="button" data-player="${row.player}">
@@ -922,8 +1068,13 @@ function renderFixtureList(containerId, countId, dateKey) {
         .map(
           (match) => `
             <button class="mini-match-card" type="button" data-match="${match.number}">
-              <span class="mini-match-time">${match.time} · Grupp ${match.group}</span>
-              <span class="mini-match-teams">${teamLabel(match.home)} - ${teamLabel(match.away)}</span>
+              <span class="mini-match-main">
+                <span>
+                  <span class="mini-match-time">${match.time} · Grupp ${match.group}</span>
+                  <span class="mini-match-teams">${teamLabel(match.home)} - ${teamLabel(match.away)}</span>
+                </span>
+                <span class="mini-result-pill ${match.result ? "has-result" : ""}">${compactMatchStatusText(match)}</span>
+              </span>
             </button>
           `
         )
@@ -1111,11 +1262,17 @@ function renderFilters() {
 
 function renderMatches(group = "all") {
   const list = document.querySelector("#match-list");
-  const visibleMatches = group === "all" ? matches : matches.filter((match) => match.group === group);
+  const hidePlayed = document.querySelector("#hide-played-matches")?.checked;
+  const visibleMatches = matches.filter((match) => {
+    const matchesGroup = group === "all" || match.group === group;
+    const matchesPlayedFilter = !hidePlayed || !match.result;
+    return matchesGroup && matchesPlayedFilter;
+  });
 
-  list.innerHTML = visibleMatches
-    .map(
-      (match) => `
+  list.innerHTML = visibleMatches.length
+    ? visibleMatches
+        .map(
+          (match) => `
         <button class="match-card" type="button" data-match="${match.number}">
           <span class="match-card-grid">
             <span class="match-number">Match ${match.number}<br>Grupp ${match.group}</span>
@@ -1124,25 +1281,26 @@ function renderMatches(group = "all") {
               <span class="team-line"><span class="flag">${flags[match.away]}</span>${match.away}</span>
             </span>
             <span class="match-meta">
-              <span class="result-pill">${scoreText(match.result)}</span><br>
-              ${match.date} ${match.time} svensk tid<br>
+              ${resultMarkup(match)}<br>
+              ${match.date} ${match.time}<br>
               ${match.venue}
             </span>
           </span>
         </button>
       `
-    )
-    .join("");
+        )
+        .join("")
+    : `<p class="empty-fixtures">Inga matcher att visa.</p>`;
 }
 
 function openMatch(matchNumber) {
   const match = matches.find((item) => item.number === matchNumber);
   const dialog = document.querySelector("#match-dialog");
-  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Grupp ${match.group} · ${match.date} ${match.time} svensk tid`;
+  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Grupp ${match.group} · ${match.date} ${match.time}`;
   document.querySelector("#dialog-title").textContent = `${teamLabel(match.home)} vs ${teamLabel(match.away)}`;
   document.querySelector("#dialog-score").innerHTML = `
     <span>${teamLabel(match.home)}</span>
-    <span class="result-pill">${scoreText(match.result)}</span>
+    ${resultMarkup(match)}
     <span>${teamLabel(match.away)}</span>
   `;
   document.querySelector("#tips-list").innerHTML = players
@@ -1195,7 +1353,7 @@ function openPlayer(player) {
           </div>
           <div class="pick-teams">
             <strong>${teamLabel(match.home)} - ${teamLabel(match.away)}</strong>
-            <p class="muted">${match.date} ${match.time} svensk tid</p>
+            <p class="muted">${match.date} ${match.time}</p>
           </div>
           <div class="pick-score">
             <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
@@ -1224,6 +1382,10 @@ document.querySelector(".filters").addEventListener("click", (event) => {
   document.querySelectorAll(".filter-button").forEach((item) => item.classList.remove("is-active"));
   button.classList.add("is-active");
   renderMatches(button.dataset.group);
+});
+
+document.querySelector("#hide-played-matches").addEventListener("change", () => {
+  renderMatches(currentMatchFilter());
 });
 
 document.querySelector("#match-list").addEventListener("click", (event) => {
@@ -1258,7 +1420,21 @@ document.querySelector("#close-player-dialog").addEventListener("click", () => {
   document.querySelector("#player-dialog").close();
 });
 
-renderFilters();
-renderLeaderboard();
-renderMatches();
-renderSimulation();
+function currentMatchFilter() {
+  return document.querySelector(".filter-button.is-active")?.dataset.group || "all";
+}
+
+function renderApp() {
+  renderLeaderboard();
+  renderMatches(currentMatchFilter());
+  renderSimulation(document.querySelector(".sim-player-button.is-active")?.dataset.player || simulationPlayers()[0]);
+}
+
+async function initializeApp() {
+  renderFilters();
+  renderApp();
+  const appliedResults = await loadRemoteResults();
+  if (appliedResults > 0) renderApp();
+}
+
+initializeApp();

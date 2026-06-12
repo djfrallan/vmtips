@@ -51,21 +51,8 @@
             </section>
 
             <aside class="panel score-panel">
-              <p class="eyebrow">Livekoll</p>
+              <p class="eyebrow">Matcher spelade</p>
               <h2 id="played-count">0/72</h2>
-              <p class="muted">Gruppspelsmatcher med inlagt slutresultat.</p>
-              <div class="stat-row">
-                <span>Matcher</span>
-                <strong>72</strong>
-              </div>
-              <div class="stat-row">
-                <span>Deltagare</span>
-                <strong>9</strong>
-              </div>
-              <div class="stat-row">
-                <span>Max gruppspel</span>
-                <strong>360p</strong>
-              </div>
               <div class="live-fixtures">
                 <section class="fixture-block">
                   <div class="fixture-heading">
@@ -95,6 +82,10 @@
             <div class="filters" aria-label="Gruppfilter">
               <button class="filter-button is-active" type="button" data-group="all">Alla</button>
             </div>
+            <label class="match-toggle">
+              <input id="hide-played-matches" type="checkbox">
+              <span>Dölj spelade matcher</span>
+            </label>
           </section>
           <div class="match-list" id="match-list"></div>
         </section>
