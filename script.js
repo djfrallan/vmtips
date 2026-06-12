@@ -138,6 +138,8 @@ const schedule = [
 
 const results = {
   // Fyll i slutresultat här, t.ex. 1: { home: 2, away: 1 }.
+  1: { home: 2, away: 0 },
+  2: { home: 2, away: 1 },
 };
 
 const matches = schedule.map(([group, number, date, time, home, away, venue]) => ({
