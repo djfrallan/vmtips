@@ -150,6 +150,7 @@ const remoteTeamNames = {
   "Cape Verde": "Kap Verde",
   Colombia: "Colombia",
   Croatia: "Kroatien",
+  "Curaçao": "Curaçao",
   "Czech Republic": "Tjeckien",
   "DR Congo": "DR Kongo",
   Ecuador: "Ecuador",
