@@ -145,6 +145,7 @@ const remoteTeamNames = {
   Austria: "Österrike",
   Belgium: "Belgien",
   "Bosnia & Herzegovina": "Bosnien och Hercegovina",
+  "Bosnia-Herzegovina": "Bosnien och Hercegovina",
   Brazil: "Brasilien",
   Canada: "Canada",
   "Cape Verde": "Kap Verde",
@@ -152,6 +153,7 @@ const remoteTeamNames = {
   Croatia: "Kroatien",
   "Curaçao": "Curaçao",
   "Czech Republic": "Tjeckien",
+  Czechia: "Tjeckien",
   "DR Congo": "DR Kongo",
   Ecuador: "Ecuador",
   Egypt: "Egypten",
@@ -200,6 +202,52 @@ const matches = schedule.map(([group, number, date, time, home, away, venue]) =>
   result: null,
   goals: [],
 }));
+
+const knockoutStages = [
+  { id: "round32", label: "Sextondel", title: "Sextondelsfinaler" },
+  { id: "round16", label: "Åttondel", title: "Åttondelsfinaler" },
+  { id: "quarter", label: "Kvart", title: "Kvartsfinaler" },
+  { id: "semi", label: "Semi", title: "Semifinaler" },
+  { id: "bronze", label: "Brons", title: "Bronsmatch" },
+  { id: "final", label: "Final", title: "Final" },
+];
+
+const knockoutMatches = [
+  { number: 73, stage: "round32", sources: ["2A", "2B"] },
+  { number: 74, stage: "round32", sources: ["1E", "3A/B/C/D/F"] },
+  { number: 75, stage: "round32", sources: ["1F", "2C"] },
+  { number: 76, stage: "round32", sources: ["1C", "2F"] },
+  { number: 77, stage: "round32", sources: ["1I", "3C/D/F/G/H"] },
+  { number: 78, stage: "round32", sources: ["2E", "2I"] },
+  { number: 79, stage: "round32", sources: ["1A", "3C/E/F/H/I"] },
+  { number: 80, stage: "round32", sources: ["1L", "3E/H/I/J/K"] },
+  { number: 81, stage: "round32", sources: ["1D", "3B/E/F/I/J"] },
+  { number: 82, stage: "round32", sources: ["1G", "3A/E/H/I/J"] },
+  { number: 83, stage: "round32", sources: ["2K", "2L"] },
+  { number: 84, stage: "round32", sources: ["1H", "2J"] },
+  { number: 85, stage: "round32", sources: ["1B", "3E/F/G/I/J"] },
+  { number: 86, stage: "round32", sources: ["1J", "2H"] },
+  { number: 87, stage: "round32", sources: ["1K", "3D/E/I/J/L"] },
+  { number: 88, stage: "round32", sources: ["2D", "2G"] },
+  { number: 89, stage: "round16", sources: ["W74", "W77"] },
+  { number: 90, stage: "round16", sources: ["W73", "W75"] },
+  { number: 91, stage: "round16", sources: ["W76", "W78"] },
+  { number: 92, stage: "round16", sources: ["W79", "W80"] },
+  { number: 93, stage: "round16", sources: ["W83", "W84"] },
+  { number: 94, stage: "round16", sources: ["W81", "W82"] },
+  { number: 95, stage: "round16", sources: ["W86", "W88"] },
+  { number: 96, stage: "round16", sources: ["W85", "W87"] },
+  { number: 97, stage: "quarter", sources: ["W89", "W90"] },
+  { number: 98, stage: "quarter", sources: ["W93", "W94"] },
+  { number: 99, stage: "quarter", sources: ["W91", "W92"] },
+  { number: 100, stage: "quarter", sources: ["W95", "W96"] },
+  { number: 101, stage: "semi", sources: ["W97", "W98"] },
+  { number: 102, stage: "semi", sources: ["W99", "W100"] },
+  { number: 103, stage: "bronze", sources: ["L101", "L102"] },
+  { number: 104, stage: "final", sources: ["W101", "W102"] },
+];
+
+const remoteKnockoutMatches = new Map();
 
 const submittedPredictions = {
   "Magnus": {
@@ -967,6 +1015,12 @@ function applyRemoteResults(data) {
   let applied = 0;
 
   data.matches.forEach((remoteMatch) => {
+    if (Number(remoteMatch.num) >= 73 && Number(remoteMatch.num) <= 104) {
+      remoteKnockoutMatches.set(Number(remoteMatch.num), remoteMatch);
+      applied += 1;
+      return;
+    }
+
     const home = remoteTeamNames[remoteMatch.team1];
     const away = remoteTeamNames[remoteMatch.team2];
     const fullTime = remoteMatch.score && remoteMatch.score.ft;
@@ -1127,7 +1181,7 @@ function emptyTeamRow(team) {
   };
 }
 
-function calculateGroupTables(player) {
+function calculateTablesFromScores(scoreForMatch) {
   const tables = Object.fromEntries(
     [...new Set(matches.map((match) => match.group))].map((group) => [group, {}])
   );
@@ -1136,23 +1190,23 @@ function calculateGroupTables(player) {
     if (!tables[match.group][match.home]) tables[match.group][match.home] = emptyTeamRow(match.home);
     if (!tables[match.group][match.away]) tables[match.group][match.away] = emptyTeamRow(match.away);
 
-    const prediction = predictions[player][match.number];
-    if (!prediction) return;
+    const score = scoreForMatch(match);
+    if (!score) return;
 
     const home = tables[match.group][match.home];
     const away = tables[match.group][match.away];
     home.played += 1;
     away.played += 1;
-    home.goalsFor += prediction.home;
-    home.goalsAgainst += prediction.away;
-    away.goalsFor += prediction.away;
-    away.goalsAgainst += prediction.home;
+    home.goalsFor += score.home;
+    home.goalsAgainst += score.away;
+    away.goalsFor += score.away;
+    away.goalsAgainst += score.home;
 
-    if (prediction.home > prediction.away) {
+    if (score.home > score.away) {
       home.wins += 1;
       away.losses += 1;
       home.points += 3;
-    } else if (prediction.home < prediction.away) {
+    } else if (score.home < score.away) {
       away.wins += 1;
       home.losses += 1;
       away.points += 3;
@@ -1181,6 +1235,14 @@ function calculateGroupTables(player) {
         ),
     ])
   );
+}
+
+function calculateGroupTables(player) {
+  return calculateTablesFromScores((match) => predictions[player][match.number]);
+}
+
+function calculateActualGroupTables() {
+  return calculateTablesFromScores((match) => match.result);
 }
 
 function renderSimulationTabs(activePlayer = simulationPlayers()[0]) {
@@ -1252,6 +1314,268 @@ function renderSimulation(player = simulationPlayers()[0]) {
     .join("");
 }
 
+function groupIsComplete(group) {
+  const groupMatches = matches.filter((match) => match.group === group);
+  return groupMatches.length === 6 && groupMatches.every((match) => match.result);
+}
+
+function sourceDescription(source) {
+  const groupSlot = source.match(/^([123])([A-L](?:\/[A-L])*)$/);
+  if (groupSlot) {
+    const position = Number(groupSlot[1]);
+    const groups = groupSlot[2].split("/");
+    if (position === 1) return `Vinnare grupp ${groups[0]}`;
+    if (position === 2) return `Tvåa grupp ${groups[0]}`;
+    return `Trea grupp ${groups.join("/")}`;
+  }
+
+  if (source.startsWith("W")) return `Vinnare match ${source.slice(1)}`;
+  if (source.startsWith("L")) return `Förlorare match ${source.slice(1)}`;
+  return source;
+}
+
+function teamsInGroup(group) {
+  const groupMatches = matches.filter((match) => match.group === group);
+  return [...new Set(groupMatches.flatMap((match) => [match.home, match.away]))];
+}
+
+function remoteTeamName(value) {
+  return remoteTeamNames[value] || (flags[value] ? value : null);
+}
+
+function knockoutDefinition(number) {
+  return knockoutMatches.find((match) => match.number === Number(number));
+}
+
+function knockoutResult(number) {
+  const remoteMatch = remoteKnockoutMatches.get(Number(number));
+  const score = remoteMatch?.score;
+  if (!score) return null;
+
+  const finalScore =
+    (Array.isArray(score.et) && score.et.length === 2 && score.et) ||
+    (Array.isArray(score.ft) && score.ft.length === 2 && score.ft);
+  if (!finalScore || !finalScore.every(Number.isInteger)) return null;
+
+  const penalties =
+    (Array.isArray(score.p) && score.p.length === 2 && score.p.every(Number.isInteger) && score.p) ||
+    (Array.isArray(score.pen) && score.pen.length === 2 && score.pen.every(Number.isInteger) && score.pen) ||
+    (Array.isArray(score.penalties) &&
+      score.penalties.length === 2 &&
+      score.penalties.every(Number.isInteger) &&
+      score.penalties) ||
+    null;
+  return { home: finalScore[0], away: finalScore[1], penalties };
+}
+
+function remoteKnockoutTeam(number, index) {
+  const remoteMatch = remoteKnockoutMatches.get(Number(number));
+  if (!remoteMatch) return null;
+  return remoteTeamName(index === 0 ? remoteMatch.team1 : remoteMatch.team2);
+}
+
+function resolveSource(source) {
+  const groupSlot = source.match(/^([123])([A-L])$/);
+  if (groupSlot) {
+    const position = Number(groupSlot[1]) - 1;
+    const group = groupSlot[2];
+    if (!groupIsComplete(group)) return null;
+    return calculateActualGroupTables()[group]?.[position]?.team || null;
+  }
+
+  const matchSlot = source.match(/^([WL])(\d+)$/);
+  if (!matchSlot) return null;
+  const matchNumber = Number(matchSlot[2]);
+  const definition = knockoutDefinition(matchNumber);
+  const result = knockoutResult(matchNumber);
+  if (!definition || !result) return null;
+
+  const teams = definition.sources.map((_, index) => remoteKnockoutTeam(matchNumber, index) || resolveSource(definition.sources[index]));
+  if (!teams[0] || !teams[1]) return null;
+
+  let winnerIndex = null;
+  if (result.home !== result.away) winnerIndex = result.home > result.away ? 0 : 1;
+  else if (result.penalties && result.penalties[0] !== result.penalties[1]) {
+    winnerIndex = result.penalties[0] > result.penalties[1] ? 0 : 1;
+  }
+  if (winnerIndex === null) return null;
+  return matchSlot[1] === "W" ? teams[winnerIndex] : teams[winnerIndex === 0 ? 1 : 0];
+}
+
+function possibleTeamsForSource(source, seen = new Set()) {
+  if (seen.has(source)) return [];
+  seen.add(source);
+
+  const exactGroupSlot = source.match(/^([12])([A-L])$/);
+  if (exactGroupSlot) {
+    const resolved = resolveSource(source);
+    return resolved ? [resolved] : teamsInGroup(exactGroupSlot[2]);
+  }
+
+  const thirdPlaceSlot = source.match(/^3([A-L](?:\/[A-L])*)$/);
+  if (thirdPlaceSlot) {
+    return thirdPlaceSlot[1].split("/").flatMap((group) => {
+      const table = calculateActualGroupTables()[group] || [];
+      return groupIsComplete(group) && table[2] ? [table[2].team] : teamsInGroup(group);
+    });
+  }
+
+  const matchSlot = source.match(/^([WL])(\d+)$/);
+  if (matchSlot) {
+    const resolved = resolveSource(source);
+    if (resolved) return [resolved];
+    const definition = knockoutDefinition(matchSlot[2]);
+    if (!definition) return [];
+    return definition.sources.flatMap((item) => possibleTeamsForSource(item, new Set(seen)));
+  }
+
+  return [];
+}
+
+function knockoutSlotMarkup(definition, index) {
+  const source = definition.sources[index];
+  const team = remoteKnockoutTeam(definition.number, index) || resolveSource(source);
+  const candidates = [...new Set(possibleTeamsForSource(source))].sort((a, b) => a.localeCompare(b, "sv"));
+  const tooltip = !team && candidates.length
+    ? `<span class="slot-tooltip"><strong>Möjliga lag</strong>${candidates.map((candidate) => `<span>${teamLabel(candidate)}</span>`).join("")}</span>`
+    : "";
+
+  return `
+    <span class="bracket-team ${team ? "is-confirmed" : "is-pending"} ${tooltip ? "has-tooltip" : ""}" tabindex="0">
+      <span class="bracket-team-name">${team ? teamLabel(team) : sourceDescription(source)}</span>
+      ${tooltip}
+    </span>
+  `;
+}
+
+function knockoutScoreText(result) {
+  if (!result) return "–";
+  const penalties = result.penalties ? ` (${result.penalties[0]}–${result.penalties[1]} str.)` : "";
+  return `${result.home}–${result.away}${penalties}`;
+}
+
+function swedishKnockoutTime(remoteMatch) {
+  if (!remoteMatch?.date || !remoteMatch?.time) return "Tid publiceras via resultatflödet";
+
+  const timeMatch = String(remoteMatch.time).match(/^(\d{1,2}):(\d{2})\s+UTC([+-]\d{1,2})(?::?(\d{2}))?$/i);
+  if (!timeMatch) return `${remoteMatch.date} · ${remoteMatch.time}`;
+
+  const [, hours, minutes, offsetHours, offsetMinutes = "00"] = timeMatch;
+  const offset = `${offsetHours.startsWith("-") ? "-" : "+"}${offsetHours.replace(/[+-]/, "").padStart(2, "0")}:${offsetMinutes}`;
+  const kickoff = new Date(`${remoteMatch.date}T${hours.padStart(2, "0")}:${minutes}:00${offset}`);
+  if (Number.isNaN(kickoff.getTime())) return `${remoteMatch.date} · ${remoteMatch.time}`;
+
+  const parts = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Stockholm",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+    .formatToParts(kickoff)
+    .reduce((values, part) => ({ ...values, [part.type]: part.value }), {});
+
+  return `${parts.day} ${parts.month} · kl. ${parts.hour}:${parts.minute}`;
+}
+
+function renderKnockoutTabs(activeStage = "round32") {
+  document.querySelector("#knockout-stage-tabs").innerHTML = knockoutStages
+    .map(
+      (stage) => `
+        <button class="knockout-stage-button ${stage.id === activeStage ? "is-active" : ""}" type="button" data-stage="${stage.id}">
+          ${stage.label}
+        </button>
+      `
+    )
+    .join("");
+}
+
+function renderKnockout(activeStage = "round32") {
+  const stage = knockoutStages.find((item) => item.id === activeStage) || knockoutStages[0];
+  const stageMatches = knockoutMatches.filter((match) => match.stage === stage.id);
+  renderKnockoutTabs(stage.id);
+
+  document.querySelector("#bracket-summary").innerHTML = `
+    <div>
+      <p class="eyebrow">Aktuell runda</p>
+      <h2>${stage.title}</h2>
+    </div>
+    <span class="muted">${stageMatches.length} ${stageMatches.length === 1 ? "match" : "matcher"}</span>
+  `;
+
+  document.querySelector("#bracket-grid").innerHTML = stageMatches
+    .map((definition) => {
+      const remoteMatch = remoteKnockoutMatches.get(definition.number);
+      const result = knockoutResult(definition.number);
+      const scheduleText = swedishKnockoutTime(remoteMatch);
+      return `
+        <article class="bracket-match ${result ? "is-played" : ""}">
+          <div class="bracket-match-meta">
+            <span>Match ${definition.number}</span>
+            <span>${escapeHtml(scheduleText)}</span>
+          </div>
+          <div class="bracket-pairing">
+            ${knockoutSlotMarkup(definition, 0)}
+            <strong class="bracket-score">${knockoutScoreText(result)}</strong>
+            ${knockoutSlotMarkup(definition, 1)}
+          </div>
+          ${remoteMatch?.ground ? `<p class="bracket-ground">${escapeHtml(remoteMatch.ground)}</p>` : ""}
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderActualGroupSelector(activeGroup = "A") {
+  const groups = [...new Set(matches.map((match) => match.group))].sort();
+  document.querySelector("#actual-group-selector").innerHTML = groups
+    .map(
+      (group) => `
+        <button class="group-selector-button ${group === activeGroup ? "is-active" : ""}" type="button" data-group="${group}">
+          ${group}
+        </button>
+      `
+    )
+    .join("");
+}
+
+function renderActualGroupTable(group = "A") {
+  const teams = calculateActualGroupTables()[group] || [];
+  const complete = groupIsComplete(group);
+  document.querySelector("#actual-group-title").textContent = `Grupp ${group}`;
+  renderActualGroupSelector(group);
+  document.querySelector("#actual-group-table").innerHTML = `
+    <div class="actual-table-status">
+      <span>${complete ? "Färdigspelad" : `${teams.reduce((sum, team) => sum + team.played, 0) / 2}/6 matcher spelade`}</span>
+      <span>${complete ? "Placeringar klara" : "Preliminär tabell"}</span>
+    </div>
+    <div class="table-wrap actual-table-wrap">
+      <table class="actual-group-table">
+        <thead>
+          <tr><th>#</th><th>Lag</th><th>S</th><th>MS</th><th>GM</th><th>Po</th></tr>
+        </thead>
+        <tbody>
+          ${teams
+            .map(
+              (team, index) => `
+                <tr class="${index < 2 ? "is-qualified" : index === 2 ? "is-third" : ""}">
+                  <td><span class="rank">${index + 1}</span></td>
+                  <td><span class="sim-team"><span>${flags[team.team] || ""}</span><span>${team.team}</span></span></td>
+                  <td>${team.played}</td>
+                  <td>${team.goalDifference > 0 ? "+" : ""}${team.goalDifference}</td>
+                  <td>${team.goalsFor}</td>
+                  <td>${team.points}</td>
+                </tr>
+              `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+    <p class="group-table-note">Tredjeplats kan gå vidare som en av de åtta bästa grupptreorna.</p>
+  `;
+}
+
 function renderFilters() {
   const filters = document.querySelector(".filters");
   const groups = [...new Set(matches.map((match) => match.group))];
@@ -1308,8 +1632,16 @@ function openMatch(matchNumber) {
     .map((player) => {
       const prediction = predictions[player][match.number];
       const score = pointsFor(prediction, match.result);
+      const resultClass =
+        prediction && match.result
+          ? score.exact
+            ? "is-exact-pick"
+            : score.correctOutcome
+              ? "is-correct-pick"
+              : "is-wrong-pick"
+          : "";
       return `
-        <div class="tip-row">
+        <div class="tip-row ${resultClass}">
           <div>
             <strong>${player}</strong>
             <p class="muted">${prediction ? `Tips: ${scoreText(prediction)} (${outcome(prediction)})` : "Inväntar tips"}</p>
@@ -1346,8 +1678,17 @@ function openPlayer(player) {
   document.querySelector("#player-picks").innerHTML = matches
     .map((match) => {
       const prediction = predictions[player][match.number];
+      const score = pointsFor(prediction, match.result);
+      const resultClass =
+        prediction && match.result
+          ? score.exact
+            ? "is-exact-pick"
+            : score.correctOutcome
+              ? "is-correct-pick"
+              : "is-wrong-pick"
+          : "";
       return `
-        <div class="player-pick-row">
+        <div class="player-pick-row ${resultClass}">
           <div class="pick-match-meta">
             Match ${match.number}<br>
             Grupp ${match.group}
@@ -1413,6 +1754,18 @@ document.querySelector("#sim-player-tabs").addEventListener("click", (event) => 
   renderSimulation(button.dataset.player);
 });
 
+document.querySelector("#knockout-stage-tabs").addEventListener("click", (event) => {
+  const button = event.target.closest(".knockout-stage-button");
+  if (!button) return;
+  renderKnockout(button.dataset.stage);
+});
+
+document.querySelector("#actual-group-selector").addEventListener("click", (event) => {
+  const button = event.target.closest(".group-selector-button");
+  if (!button) return;
+  renderActualGroupTable(button.dataset.group);
+});
+
 document.querySelector("#close-dialog").addEventListener("click", () => {
   document.querySelector("#match-dialog").close();
 });
@@ -1429,6 +1782,8 @@ function renderApp() {
   renderLeaderboard();
   renderMatches(currentMatchFilter());
   renderSimulation(document.querySelector(".sim-player-button.is-active")?.dataset.player || simulationPlayers()[0]);
+  renderKnockout(document.querySelector(".knockout-stage-button.is-active")?.dataset.stage || "round32");
+  renderActualGroupTable(document.querySelector(".group-selector-button.is-active")?.dataset.group || "A");
 }
 
 async function initializeApp() {
@@ -1436,6 +1791,11 @@ async function initializeApp() {
   renderApp();
   const appliedResults = await loadRemoteResults();
   if (appliedResults > 0) renderApp();
+
+  window.setInterval(async () => {
+    const refreshedResults = await loadRemoteResults();
+    if (refreshedResults > 0) renderApp();
+  }, 5 * 60 * 1000);
 }
 
 initializeApp();

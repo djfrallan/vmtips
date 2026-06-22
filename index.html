@@ -19,6 +19,7 @@
         <nav class="tabs" aria-label="Vyer">
           <button class="tab-button is-active" type="button" data-view="leaderboard">Tabell</button>
           <button class="tab-button" type="button" data-view="matches">Matcher</button>
+          <button class="tab-button knockout-feature-tab" type="button" data-view="knockout"><span>Slutspel</span></button>
           <button class="tab-button" type="button" data-view="simulation">Simulation</button>
         </nav>
       </header>
@@ -100,6 +101,34 @@
           </section>
           <div class="simulation-summary" id="simulation-summary"></div>
           <div class="simulation-grid" id="simulation-grid"></div>
+        </section>
+
+        <section class="view" id="knockout-view">
+          <section class="knockout-header">
+            <div>
+              <h2>Slutspel</h2>
+            </div>
+            <div class="knockout-stage-tabs" id="knockout-stage-tabs" aria-label="Välj slutspelsrunda"></div>
+          </section>
+
+          <section class="knockout-layout">
+            <div class="panel bracket-panel">
+              <div class="bracket-summary" id="bracket-summary"></div>
+              <div class="bracket-grid" id="bracket-grid"></div>
+            </div>
+
+            <aside class="panel group-standings-panel">
+              <div class="group-standings-heading">
+                <div>
+                  <p class="eyebrow">Aktuell ställning</p>
+                  <h2 id="actual-group-title">Grupp A</h2>
+                </div>
+                <span class="qualification-key"><i></i> Vidare</span>
+              </div>
+              <div class="group-selector" id="actual-group-selector" aria-label="Välj grupp"></div>
+              <div id="actual-group-table"></div>
+            </aside>
+          </section>
         </section>
       </main>
     </div>
