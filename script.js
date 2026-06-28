@@ -1012,12 +1012,159 @@ const submittedPredictions = {
   },
 };
 
-const emptyPredictions = Object.fromEntries(matches.map((match) => [match.number, null]));
+const emptyPredictions = Object.fromEntries(
+  [...matches.map((match) => match.number), ...knockoutMatches.map((match) => match.number)].map((number) => [number, null])
+);
 const predictions = Object.fromEntries(
   players.map((player) => [player, { ...emptyPredictions, ...(submittedPredictions[player] || {}) }])
 );
 
-const submittedKnockoutPredictions = {};
+const submittedKnockoutPredictions = {
+  "Magnus": {
+    73: { home: 1, away: 2 },
+    76: { home: 2, away: 0 },
+    74: { home: 2, away: 0 },
+    75: { home: 1, away: 1 },
+    78: { home: 1, away: 1 },
+    77: { home: 3, away: 1 },
+    79: { home: 2, away: 0 },
+    80: { home: 2, away: 0 },
+    82: { home: 2, away: 1 },
+    81: { home: 2, away: 1 },
+    84: { home: 2, away: 0 },
+    83: { home: 1, away: 1 },
+    85: { home: 2, away: 0 },
+    88: { home: 1, away: 1 },
+    86: { home: 3, away: 0 },
+    87: { home: 2, away: 1 },
+  },
+  "Rasmus": {
+    73: { home: 1, away: 3 },
+    74: { home: 4, away: 1 },
+    75: { home: 2, away: 1 },
+    76: { home: 3, away: 1 },
+    77: { home: 5, away: 0 },
+    78: { home: 0, away: 2 },
+    79: { home: 2, away: 1 },
+    80: { home: 3, away: 0 },
+    81: { home: 2, away: 0 },
+    82: { home: 1, away: 2 },
+    83: { home: 2, away: 0 },
+    84: { home: 2, away: 1 },
+    85: { home: 1, away: 0 },
+    86: { home: 5, away: 0 },
+    87: { home: 0, away: 2 },
+    88: { home: 1, away: 2 },
+  },
+  "Måns": {
+    73: { home: 2, away: 1 },
+    74: { home: 4, away: 1 },
+    75: { home: 2, away: 1 },
+    76: { home: 2, away: 1 },
+    77: { home: 4, away: 1 },
+    78: { home: 1, away: 3 },
+    79: { home: 2, away: 0 },
+    80: { home: 2, away: 0 },
+    81: { home: 0, away: 1 },
+    82: { home: 2, away: 0 },
+    83: { home: 3, away: 0 },
+    84: { home: 2, away: 0 },
+    85: { home: 2, away: 1 },
+    86: { home: 3, away: 0 },
+    87: { home: 0, away: 2 },
+    88: { home: 2, away: 0 },
+  },
+  "Fredrik": {
+    73: { home: 2, away: 1 },
+    74: { home: 3, away: 1 },
+    75: { home: 3, away: 1 },
+    76: { home: 1, away: 1 },
+    77: { home: 3, away: 1 },
+    78: { home: 0, away: 2 },
+    79: { home: 2, away: 1 },
+    80: { home: 3, away: 0 },
+    81: { home: 2, away: 2 },
+    82: { home: 1, away: 2 },
+    83: { home: 1, away: 1 },
+    84: { home: 1, away: 0 },
+    85: { home: 2, away: 0 },
+    86: { home: 3, away: 0 },
+    87: { home: 1, away: 1 },
+    88: { home: 2, away: 2 },
+  },
+  "Anders": {
+    73: { home: 1, away: 2 },
+    74: { home: 1, away: 0 },
+    75: { home: 1, away: 1 },
+    76: { home: 2, away: 0 },
+    77: { home: 4, away: 0 },
+    78: { home: 1, away: 1 },
+    79: { home: 0, away: 1 },
+    80: { home: 2, away: 0 },
+    81: { home: 1, away: 1 },
+    82: { home: 0, away: 0 },
+    83: { home: 1, away: 1 },
+    84: { home: 1, away: 0 },
+    85: { home: 2, away: 0 },
+    86: { home: 3, away: 0 },
+    87: { home: 1, away: 0 },
+    88: { home: 0, away: 0 },
+  },
+  "Axel": {
+    73: { home: 1, away: 1 },
+    74: { home: 2, away: 1 },
+    75: { home: 2, away: 0 },
+    76: { home: 2, away: 0 },
+    77: { home: 3, away: 1 },
+    78: { home: 2, away: 2 },
+    79: { home: 2, away: 1 },
+    80: { home: 2, away: 0 },
+    81: { home: 2, away: 1 },
+    82: { home: 1, away: 0 },
+    83: { home: 2, away: 1 },
+    84: { home: 3, away: 0 },
+    85: { home: 0, away: 0 },
+    86: { home: 3, away: 0 },
+    87: { home: 2, away: 2 },
+    88: { home: 1, away: 1 },
+  },
+  "William": {
+    73: { home: 1, away: 2 },
+    74: { home: 3, away: 0 },
+    75: { home: 2, away: 1 },
+    76: { home: 2, away: 0 },
+    77: { home: 4, away: 1 },
+    78: { home: 1, away: 3 },
+    79: { home: 2, away: 1 },
+    80: { home: 3, away: 0 },
+    81: { home: 2, away: 0 },
+    82: { home: 1, away: 1 },
+    83: { home: 2, away: 1 },
+    84: { home: 3, away: 0 },
+    85: { home: 1, away: 0 },
+    86: { home: 3, away: 0 },
+    87: { home: 1, away: 1 },
+    88: { home: 2, away: 1 },
+  },
+  "Nils": {
+    73: { home: 1, away: 3 },
+    74: { home: 1, away: 1 },
+    75: { home: 3, away: 2 },
+    76: { home: 0, away: 3 },
+    77: { home: 3, away: 4 },
+    78: { home: 2, away: 4 },
+    79: { home: 1, away: 2 },
+    80: { home: 2, away: 2 },
+    81: { home: 2, away: 1 },
+    82: { home: 1, away: 2 },
+    83: { home: 3, away: 2 },
+    84: { home: 2, away: 2 },
+    85: { home: 3, away: 0 },
+    86: { home: 0, away: 0 },
+    87: { home: 1, away: 3 },
+    88: { home: 1, away: 3 },
+  },
+};
 const emptyKnockoutPredictions = Object.fromEntries(knockoutMatches.map((match) => [match.number, null]));
 const knockoutPredictions = Object.fromEntries(
   players.map((player) => [player, { ...emptyKnockoutPredictions, ...(submittedKnockoutPredictions[player] || {}) }])
@@ -1224,7 +1371,7 @@ function renderLeaderboard() {
     )
     .join("");
 
-  const round32Matches = knockoutMatches.filter((match) => match.stage === "round32");
+  const round32Matches = round32Fixtures();
   const played = round32Matches.filter((match) => knockoutResult(match.number)).length;
   document.querySelector("#played-count").textContent = `${played}/${round32Matches.length}`;
   renderLiveFixtures();
@@ -1263,7 +1410,7 @@ function groupFixture(match) {
 function allFixtures() {
   return [
     ...matches.map(groupFixture),
-    ...knockoutMatches.filter((match) => match.stage === "round32").map(knockoutFixture),
+    ...round32Fixtures(),
   ].sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
 }
 
@@ -1477,6 +1624,13 @@ function renderSimulation(player = simulationPlayers()[0]) {
       `
     )
     .join("");
+}
+
+function round32Fixtures() {
+  return knockoutMatches
+    .filter((match) => match.stage === "round32")
+    .map(knockoutFixture)
+    .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
 }
 
 function groupIsComplete(group) {
@@ -1934,10 +2088,7 @@ function renderMatches(group = "all") {
   if (hidePlayedToggle) hidePlayedToggle.closest(".match-toggle").hidden = matchView !== "groups";
 
   if (matchView === "round32") {
-    const fixtures = knockoutMatches
-      .filter((match) => match.stage === "round32")
-      .map(knockoutFixture)
-      .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
+    const fixtures = round32Fixtures();
 
     list.innerHTML = fixtures.length
       ? fixtures
@@ -2090,7 +2241,10 @@ function openKnockoutMatch(matchNumber) {
 function openPlayer(player) {
   const dialog = document.querySelector("#player-dialog");
   const stats = playerStats(player);
-  document.querySelector("#player-dialog-meta").textContent = `${stats.submitted}/${matches.length} gruppspelstips`;
+  const round32Definitions = round32Fixtures();
+  const submittedRound32 = round32Definitions.filter((match) => knockoutPredictions[player][match.number]).length;
+  document.querySelector("#player-dialog-meta").textContent =
+    `${stats.submitted}/${matches.length} gruppspel · ${submittedRound32}/${round32Definitions.length} sextondel`;
   document.querySelector("#player-dialog-title").textContent = player;
   document.querySelector("#player-summary").innerHTML = `
     <div class="summary-stat">
@@ -2106,38 +2260,64 @@ function openPlayer(player) {
       <strong>${stats.exacts}</strong>
     </div>
   `;
-  document.querySelector("#player-picks").innerHTML = matches
+  const groupPickRows = matches
     .map((match) => {
-      const prediction = predictions[player][match.number];
-      const score = pointsFor(prediction, match.result);
-      const resultClass =
-        prediction && match.result
-          ? score.exact
-            ? "is-exact-pick"
-            : score.correctOutcome
-              ? "is-correct-pick"
-              : "is-wrong-pick"
-          : "";
-      return `
-        <div class="player-pick-row ${resultClass}">
-          <div class="pick-match-meta">
-            Match ${match.number}<br>
-            Grupp ${match.group}
-          </div>
-          <div class="pick-teams">
-            <strong>${teamLabel(match.home)} - ${teamLabel(match.away)}</strong>
-            <p class="muted">${match.date} ${match.time}</p>
-          </div>
-          <div class="pick-score">
-            <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
-            <span class="outcome-pill">${prediction ? outcome(prediction) : "-"}</span>
-          </div>
-        </div>
-      `;
+      return playerPickRow({
+        match,
+        prediction: predictions[player][match.number],
+        result: match.result,
+        meta: `Match ${match.number}<br>Grupp ${match.group}`,
+        dateTime: `${match.date} ${match.time}`,
+      });
+    })
+    .join("");
+  const round32PickRows = round32Definitions
+    .map((match) => {
+      return playerPickRow({
+        match,
+        prediction: knockoutPredictions[player][match.number],
+        result: match.result,
+        meta: `Match ${match.number}<br>Sextondel`,
+        dateTime: swedishFixtureDateTime(match),
+      });
     })
     .join("");
 
+  document.querySelector("#player-picks").innerHTML = `
+    <div class="player-pick-section">Sextondel</div>
+    ${round32PickRows}
+    <div class="player-pick-section">Gruppspel</div>
+    ${groupPickRows}
+  `;
+
   dialog.showModal();
+}
+
+function playerPickRow({ match, prediction, result, meta, dateTime }) {
+  const score = pointsFor(prediction, result);
+  const resultClass =
+    prediction && result
+      ? score.exact
+        ? "is-exact-pick"
+        : score.correctOutcome
+          ? "is-correct-pick"
+          : "is-wrong-pick"
+      : "";
+  return `
+    <div class="player-pick-row ${resultClass}">
+      <div class="pick-match-meta">
+        ${meta}
+      </div>
+      <div class="pick-teams">
+        <strong>${teamLabel(match.home)} - ${teamLabel(match.away)}</strong>
+        <p class="muted">${dateTime}</p>
+      </div>
+      <div class="pick-score">
+        <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
+        <span class="outcome-pill">${prediction ? outcome(prediction) : "-"}</span>
+      </div>
+    </div>
+  `;
 }
 
 document.querySelectorAll(".tab-button").forEach((button) => {

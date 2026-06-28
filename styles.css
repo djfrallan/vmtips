@@ -1056,6 +1056,18 @@ tbody tr:last-child td {
   padding: 12px;
 }
 
+.player-pick-section {
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.player-pick-section:first-child {
+  margin-top: 0;
+}
+
 .pick-match-meta {
   color: var(--muted);
   font-size: 0.78rem;
