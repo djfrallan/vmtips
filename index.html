@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260628-hidden-filters">
   </head>
   <body>
     <div class="app-shell">
@@ -52,8 +52,8 @@
             </section>
 
             <aside class="panel score-panel">
-              <p class="eyebrow">Matcher spelade</p>
-              <h2 id="played-count">0/72</h2>
+              <p class="eyebrow">Sextondel spelade</p>
+              <h2 id="played-count">0/16</h2>
               <div class="live-fixtures">
                 <section class="fixture-block">
                   <div class="fixture-heading">
@@ -77,10 +77,14 @@
         <section class="view" id="matches-view">
           <section class="matches-header">
             <div>
-              <p class="eyebrow">Gruppspel</p>
-              <h2>Alla matcher</h2>
+              <p class="eyebrow" id="matches-eyebrow">Slutspel</p>
+              <h2 id="matches-title">Sextondelsmatcher</h2>
             </div>
-            <div class="filters" aria-label="Gruppfilter">
+            <div class="match-view-tabs" aria-label="Välj matchvy">
+              <button class="match-view-button is-active" type="button" data-match-view="round32">Sextondel</button>
+              <button class="match-view-button" type="button" data-match-view="groups">Gruppspel</button>
+            </div>
+            <div class="filters" aria-label="Gruppfilter" hidden>
               <button class="filter-button is-active" type="button" data-group="all">Alla</button>
             </div>
             <label class="match-toggle">
@@ -157,6 +161,6 @@
       <div class="player-picks" id="player-picks"></div>
     </dialog>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260628-match-tabs-clean"></script>
   </body>
 </html>

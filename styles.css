@@ -80,8 +80,13 @@ h2 {
   line-height: 1.6;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .tabs,
-.filters {
+.filters,
+.match-view-tabs {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -90,6 +95,7 @@ h2 {
 
 .tab-button,
 .filter-button,
+.match-view-button,
 .icon-button {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
@@ -99,7 +105,8 @@ h2 {
 }
 
 .tab-button,
-.filter-button {
+.filter-button,
+.match-view-button {
   min-height: 42px;
   border-radius: 8px;
   padding: 0 16px;
@@ -108,13 +115,15 @@ h2 {
 
 .tab-button:hover,
 .filter-button:hover,
+.match-view-button:hover,
 .icon-button:hover {
   border-color: rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.08);
 }
 
 .tab-button.is-active,
-.filter-button.is-active {
+.filter-button.is-active,
+.match-view-button.is-active {
   border-color: rgba(54, 211, 153, 0.48);
   background: rgba(54, 211, 153, 0.14);
   color: #dffcef;
@@ -1170,13 +1179,15 @@ tbody tr:last-child td {
   }
 
   .tabs,
-  .filters {
+  .filters,
+  .match-view-tabs {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 100%;
   }
 
   .filter-button,
+  .match-view-button,
   .tab-button {
     min-height: 40px;
     padding: 0 10px;
@@ -1359,11 +1370,17 @@ tbody tr:last-child td {
     gap: 6px;
   }
 
+  .match-view-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
   .match-toggle {
     justify-content: flex-start;
   }
 
-  .filter-button {
+  .filter-button,
+  .match-view-button {
     font-size: 0.82rem;
   }
 

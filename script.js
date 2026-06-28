@@ -203,6 +203,81 @@ const matches = schedule.map(([group, number, date, time, home, away, venue]) =>
   goals: [],
 }));
 
+const actualGroupResults = {
+  1: { home: 2, away: 0 },
+  2: { home: 2, away: 1 },
+  3: { home: 1, away: 1 },
+  4: { home: 4, away: 1 },
+  8: { home: 1, away: 1 },
+  7: { home: 1, away: 1 },
+  5: { home: 0, away: 1 },
+  6: { home: 2, away: 0 },
+  10: { home: 7, away: 1 },
+  11: { home: 2, away: 2 },
+  9: { home: 1, away: 0 },
+  12: { home: 5, away: 1 },
+  14: { home: 0, away: 0 },
+  16: { home: 1, away: 1 },
+  13: { home: 1, away: 1 },
+  15: { home: 2, away: 2 },
+  17: { home: 3, away: 1 },
+  18: { home: 1, away: 4 },
+  19: { home: 3, away: 0 },
+  20: { home: 3, away: 1 },
+  23: { home: 1, away: 1 },
+  22: { home: 4, away: 2 },
+  21: { home: 1, away: 0 },
+  24: { home: 1, away: 3 },
+  25: { home: 1, away: 1 },
+  26: { home: 4, away: 1 },
+  27: { home: 6, away: 0 },
+  28: { home: 1, away: 0 },
+  32: { home: 2, away: 0 },
+  30: { home: 0, away: 1 },
+  29: { home: 3, away: 0 },
+  31: { home: 0, away: 1 },
+  35: { home: 5, away: 1 },
+  33: { home: 2, away: 1 },
+  34: { home: 0, away: 0 },
+  36: { home: 0, away: 4 },
+  38: { home: 4, away: 0 },
+  39: { home: 0, away: 0 },
+  37: { home: 2, away: 2 },
+  40: { home: 1, away: 3 },
+  43: { home: 2, away: 0 },
+  42: { home: 3, away: 0 },
+  41: { home: 3, away: 2 },
+  44: { home: 1, away: 2 },
+  47: { home: 5, away: 0 },
+  45: { home: 0, away: 0 },
+  46: { home: 0, away: 1 },
+  48: { home: 1, away: 0 },
+  51: { home: 2, away: 1 },
+  52: { home: 3, away: 1 },
+  49: { home: 0, away: 3 },
+  50: { home: 4, away: 2 },
+  53: { home: 0, away: 3 },
+  54: { home: 1, away: 0 },
+  55: { home: 0, away: 2 },
+  56: { home: 2, away: 1 },
+  57: { home: 1, away: 1 },
+  58: { home: 1, away: 3 },
+  59: { home: 3, away: 2 },
+  60: { home: 0, away: 0 },
+  61: { home: 1, away: 4 },
+  62: { home: 5, away: 0 },
+  65: { home: 0, away: 0 },
+  66: { home: 0, away: 1 },
+  63: { home: 1, away: 1 },
+  64: { home: 1, away: 5 },
+  67: { home: 0, away: 2 },
+  68: { home: 2, away: 1 },
+  71: { home: 0, away: 0 },
+  72: { home: 3, away: 1 },
+  69: { home: 3, away: 3 },
+  70: { home: 1, away: 3 },
+};
+
 const knockoutStages = [
   { id: "round32", label: "Sextondel", title: "Sextondelsfinaler" },
   { id: "round16", label: "Åttondel", title: "Åttondelsfinaler" },
@@ -214,20 +289,20 @@ const knockoutStages = [
 
 const knockoutMatches = [
   { number: 73, stage: "round32", sources: ["2A", "2B"] },
-  { number: 74, stage: "round32", sources: ["1E", "3A/B/C/D/F"] },
+  { number: 74, stage: "round32", sources: ["1E", "3D"] },
   { number: 75, stage: "round32", sources: ["1F", "2C"] },
   { number: 76, stage: "round32", sources: ["1C", "2F"] },
-  { number: 77, stage: "round32", sources: ["1I", "3C/D/F/G/H"] },
+  { number: 77, stage: "round32", sources: ["1I", "3F"] },
   { number: 78, stage: "round32", sources: ["2E", "2I"] },
-  { number: 79, stage: "round32", sources: ["1A", "3C/E/F/H/I"] },
-  { number: 80, stage: "round32", sources: ["1L", "3E/H/I/J/K"] },
-  { number: 81, stage: "round32", sources: ["1D", "3B/E/F/I/J"] },
-  { number: 82, stage: "round32", sources: ["1G", "3A/E/H/I/J"] },
+  { number: 79, stage: "round32", sources: ["1A", "3E"] },
+  { number: 80, stage: "round32", sources: ["1L", "3K"] },
+  { number: 81, stage: "round32", sources: ["1D", "3B"] },
+  { number: 82, stage: "round32", sources: ["1G", "3I"] },
   { number: 83, stage: "round32", sources: ["2K", "2L"] },
   { number: 84, stage: "round32", sources: ["1H", "2J"] },
-  { number: 85, stage: "round32", sources: ["1B", "3E/F/G/I/J"] },
+  { number: 85, stage: "round32", sources: ["1B", "3J"] },
   { number: 86, stage: "round32", sources: ["1J", "2H"] },
-  { number: 87, stage: "round32", sources: ["1K", "3D/E/I/J/L"] },
+  { number: 87, stage: "round32", sources: ["1K", "3L"] },
   { number: 88, stage: "round32", sources: ["2D", "2G"] },
   { number: 89, stage: "round16", sources: ["W74", "W77"] },
   { number: 90, stage: "round16", sources: ["W73", "W75"] },
@@ -248,6 +323,25 @@ const knockoutMatches = [
 ];
 
 const remoteKnockoutMatches = new Map();
+
+const knockoutSchedule = {
+  73: { date: "2026-06-28", time: "21:00", venue: "SoFi Stadium, Inglewood" },
+  74: { date: "2026-06-29", time: "22:30", venue: "Gillette Stadium, Foxborough" },
+  75: { date: "2026-06-30", time: "03:00", venue: "Estadio BBVA, Guadalupe" },
+  76: { date: "2026-06-29", time: "19:00", venue: "NRG Stadium, Houston" },
+  77: { date: "2026-06-30", time: "23:00", venue: "MetLife Stadium, East Rutherford" },
+  78: { date: "2026-06-30", time: "19:00", venue: "AT&T Stadium, Arlington" },
+  79: { date: "2026-07-01", time: "03:00", venue: "Estadio Azteca, Mexico City" },
+  80: { date: "2026-07-01", time: "18:00", venue: "Mercedes-Benz Stadium, Atlanta" },
+  81: { date: "2026-07-02", time: "02:00", venue: "Levi's Stadium, Santa Clara" },
+  82: { date: "2026-07-01", time: "22:00", venue: "Lumen Field, Seattle" },
+  83: { date: "2026-07-03", time: "01:00", venue: "BMO Field, Toronto" },
+  84: { date: "2026-07-02", time: "21:00", venue: "SoFi Stadium, Inglewood" },
+  85: { date: "2026-07-03", time: "05:00", venue: "BC Place, Vancouver" },
+  86: { date: "2026-07-04", time: "00:00", venue: "Hard Rock Stadium, Miami Gardens" },
+  87: { date: "2026-07-04", time: "03:30", venue: "Arrowhead Stadium, Kansas City" },
+  88: { date: "2026-07-03", time: "20:00", venue: "AT&T Stadium, Arlington" },
+};
 
 const submittedPredictions = {
   "Magnus": {
@@ -923,6 +1017,12 @@ const predictions = Object.fromEntries(
   players.map((player) => [player, { ...emptyPredictions, ...(submittedPredictions[player] || {}) }])
 );
 
+const submittedKnockoutPredictions = {};
+const emptyKnockoutPredictions = Object.fromEntries(knockoutMatches.map((match) => [match.number, null]));
+const knockoutPredictions = Object.fromEntries(
+  players.map((player) => [player, { ...emptyKnockoutPredictions, ...(submittedKnockoutPredictions[player] || {}) }])
+);
+
 function outcome(score) {
   if (!score) return null;
   if (score.home > score.away) return "1";
@@ -997,41 +1097,57 @@ function remoteGoalEntries(goals, team) {
 }
 
 function goalSummary(match) {
-  if (!match.goals.length) return "Inga målgörare registrerade.";
+  if (!Array.isArray(match.goals) || !match.goals.length) return "Inga målgörare registrerade.";
   return match.goals
     .map((goal) => `${goal.team}: ${goal.name}${goal.minute ? ` ${goal.minute}'` : ""}`)
     .join("\n");
 }
 
 function resultMarkup(match) {
-  const title = match.result ? `Målgörare:\n${goalSummary(match)}` : "Slutresultat saknas i openfootball JSON.";
+  const title = match.result
+    ? match.type === "knockout"
+      ? "Slutspelsresultat."
+      : `Målgörare:\n${goalSummary(match)}`
+    : "Slutresultat saknas.";
   return `<span class="result-pill ${match.result ? "has-goals" : "is-pending"}" title="${escapeHtml(title)}">${matchStatusText(match)}</span>`;
+}
+
+function applyActualGroupResults() {
+  matches.forEach((match) => {
+    const result = actualGroupResults[match.number];
+    if (!result) return;
+    match.result = { ...result };
+  });
 }
 
 function applyRemoteResults(data) {
   if (!data || !Array.isArray(data.matches)) return 0;
 
   const byTeams = Object.fromEntries(matches.map((match) => [matchKey(match.home, match.away), match]));
+  const byNumber = Object.fromEntries(matches.map((match) => [match.number, match]));
   let applied = 0;
 
   data.matches.forEach((remoteMatch) => {
-    if (Number(remoteMatch.num) >= 73 && Number(remoteMatch.num) <= 104) {
-      remoteKnockoutMatches.set(Number(remoteMatch.num), remoteMatch);
+    const matchNumber = Number(remoteMatch.num);
+    if (matchNumber >= 73 && matchNumber <= 104) {
+      remoteKnockoutMatches.set(matchNumber, remoteMatch);
       applied += 1;
       return;
     }
 
-    const home = remoteTeamNames[remoteMatch.team1];
-    const away = remoteTeamNames[remoteMatch.team2];
     const fullTime = remoteMatch.score && remoteMatch.score.ft;
 
-    if (!home || !away || !Array.isArray(fullTime) || fullTime.length !== 2) return;
-    if (!Number.isInteger(fullTime[0]) || !Number.isInteger(fullTime[1])) return;
+    if (!Array.isArray(fullTime) || fullTime.length !== 2) return;
+    if (fullTime.some((score) => score === null || score === "")) return;
+    const normalizedFullTime = fullTime.map((score) => Number(score));
+    if (!normalizedFullTime.every(Number.isInteger)) return;
 
-    const match = byTeams[matchKey(home, away)];
+    const home = remoteTeamNames[remoteMatch.team1];
+    const away = remoteTeamNames[remoteMatch.team2];
+    const match = byNumber[matchNumber] || byTeams[matchKey(home, away)];
     if (!match) return;
 
-    match.result = { home: fullTime[0], away: fullTime[1] };
+    match.result = { home: normalizedFullTime[0], away: normalizedFullTime[1] };
     match.goals = [
       ...remoteGoalEntries(remoteMatch.goals1, match.home),
       ...remoteGoalEntries(remoteMatch.goals2, match.away),
@@ -1108,14 +1224,63 @@ function renderLeaderboard() {
     )
     .join("");
 
-  const played = matches.filter((match) => match.result).length;
-  document.querySelector("#played-count").textContent = `${played}/${matches.length}`;
+  const round32Matches = knockoutMatches.filter((match) => match.stage === "round32");
+  const played = round32Matches.filter((match) => knockoutResult(match.number)).length;
+  document.querySelector("#played-count").textContent = `${played}/${round32Matches.length}`;
   renderLiveFixtures();
+}
+
+function knockoutFixture(definition) {
+  const schedule = knockoutSchedule[definition.number] || {};
+  return {
+    type: "knockout",
+    stage: definition.stage === "round32" ? "Sextondel" : sourceDescription(definition.stage),
+    number: definition.number,
+    date: schedule.date || "",
+    time: schedule.time || "",
+    home: remoteKnockoutTeam(definition.number, 0) || resolveSource(definition.sources[0]) || sourceDescription(definition.sources[0]),
+    away: remoteKnockoutTeam(definition.number, 1) || resolveSource(definition.sources[1]) || sourceDescription(definition.sources[1]),
+    venue: schedule.venue || remoteKnockoutMatches.get(definition.number)?.ground || "Arena ej publicerad",
+    result: knockoutResult(definition.number),
+  };
+}
+
+function groupFixture(match) {
+  return {
+    type: "group",
+    stage: `Grupp ${match.group}`,
+    number: match.number,
+    date: match.date,
+    time: match.time,
+    home: match.home,
+    away: match.away,
+    venue: match.venue,
+    result: match.result,
+    group: match.group,
+  };
+}
+
+function allFixtures() {
+  return [
+    ...matches.map(groupFixture),
+    ...knockoutMatches.filter((match) => match.stage === "round32").map(knockoutFixture),
+  ].sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
+}
+
+function fixtureStatusText(fixture) {
+  return fixture.result ? scoreText(fixture.result) : matchStatusText(fixture);
+}
+
+function compactFixtureStatusText(fixture) {
+  const status = fixtureStatusText(fixture);
+  if (status === "Match pågår") return "Pågår";
+  if (status === "Resultat ej syncat") return "Ej syncat";
+  return status;
 }
 
 function renderFixtureList(containerId, countId, dateKey) {
   const list = document.querySelector(containerId);
-  const fixtures = matches.filter((match) => match.date === dateKey);
+  const fixtures = allFixtures().filter((match) => match.date === dateKey);
   document.querySelector(countId).textContent = fixtures.length;
 
   list.innerHTML = fixtures.length
@@ -1125,10 +1290,10 @@ function renderFixtureList(containerId, countId, dateKey) {
             <button class="mini-match-card" type="button" data-match="${match.number}">
               <span class="mini-match-main">
                 <span>
-                  <span class="mini-match-time">${match.time} · Grupp ${match.group}</span>
+                  <span class="mini-match-time">${match.time} · ${match.stage}</span>
                   <span class="mini-match-teams">${teamLabel(match.home)} - ${teamLabel(match.away)}</span>
                 </span>
-                <span class="mini-result-pill ${match.result ? "has-result" : ""}">${compactMatchStatusText(match)}</span>
+                <span class="mini-result-pill ${match.result ? "has-result" : ""}">${compactFixtureStatusText(match)}</span>
               </span>
             </button>
           `
@@ -1319,6 +1484,170 @@ function groupIsComplete(group) {
   return groupMatches.length === 6 && groupMatches.every((match) => match.result);
 }
 
+function scoredGroupMatches(group) {
+  return matches.filter((match) => match.group === group);
+}
+
+function applyScoreToRows(rows, match, score) {
+  const home = rows[match.home];
+  const away = rows[match.away];
+  home.played += 1;
+  away.played += 1;
+  home.goalsFor += score.home;
+  home.goalsAgainst += score.away;
+  away.goalsFor += score.away;
+  away.goalsAgainst += score.home;
+
+  if (score.home > score.away) {
+    home.wins += 1;
+    away.losses += 1;
+    home.points += 3;
+  } else if (score.home < score.away) {
+    away.wins += 1;
+    home.losses += 1;
+    away.points += 3;
+  } else {
+    home.draws += 1;
+    away.draws += 1;
+    home.points += 1;
+    away.points += 1;
+  }
+}
+
+function headToHeadStats(team, opponent, groupMatches) {
+  return groupMatches.reduce(
+    (stats, match) => {
+      if (!match.result) return stats;
+      const homeTeam = match.home === team;
+      const awayTeam = match.away === team;
+      if ((!homeTeam && !awayTeam) || (match.home !== opponent && match.away !== opponent)) return stats;
+
+      const goalsFor = homeTeam ? match.result.home : match.result.away;
+      const goalsAgainst = homeTeam ? match.result.away : match.result.home;
+      stats.goalsFor += goalsFor;
+      stats.goalsAgainst += goalsAgainst;
+      stats.goalDifference += goalsFor - goalsAgainst;
+      if (goalsFor > goalsAgainst) stats.points += 3;
+      else if (goalsFor === goalsAgainst) stats.points += 1;
+      return stats;
+    },
+    { points: 0, goalDifference: 0, goalsFor: 0 }
+  );
+}
+
+function headToHeadComparison(a, b, groupMatches) {
+  const headToHeadA = headToHeadStats(a.team, b.team, groupMatches);
+  const headToHeadB = headToHeadStats(b.team, a.team, groupMatches);
+  return (
+    headToHeadB.points - headToHeadA.points ||
+    headToHeadB.goalDifference - headToHeadA.goalDifference ||
+    headToHeadB.goalsFor - headToHeadA.goalsFor
+  );
+}
+
+function sortGroupRowsWithHeadToHead(rows, groupMatches) {
+  return Object.values(rows)
+    .map((team) => ({
+      ...team,
+      goalDifference: team.goalsFor - team.goalsAgainst,
+    }))
+    .sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      return (
+        headToHeadComparison(a, b, groupMatches) ||
+        b.goalDifference - a.goalDifference ||
+        b.goalsFor - a.goalsFor ||
+        a.team.localeCompare(b.team, "sv")
+      );
+    });
+}
+
+function simulatedScore(outcome) {
+  if (outcome === "home") return { home: 1, away: 0 };
+  if (outcome === "away") return { home: 0, away: 1 };
+  return { home: 0, away: 0 };
+}
+
+function collectScenarioPositions(rows, scenarioMatches, teamsByPosition) {
+  const sortedRows = sortGroupRowsWithHeadToHead(rows, scenarioMatches);
+  let start = 0;
+
+  while (start < sortedRows.length) {
+    let end = start + 1;
+    while (end < sortedRows.length && sortedRows[end].points === sortedRows[start].points) end += 1;
+
+    const tiedRows = sortedRows.slice(start, end);
+    let remainingRows = [...tiedRows];
+    let position = start;
+
+    while (remainingRows.length) {
+      const headToHeadWinner = remainingRows.find((team) =>
+        remainingRows.every((opponent) => opponent.team === team.team || headToHeadComparison(team, opponent, scenarioMatches) < 0)
+      );
+
+      if (!headToHeadWinner) {
+        remainingRows.forEach((team) => {
+          for (let possiblePosition = position; possiblePosition < end; possiblePosition += 1) {
+            teamsByPosition[possiblePosition].add(team.team);
+          }
+        });
+        break;
+      }
+
+      teamsByPosition[position].add(headToHeadWinner.team);
+      remainingRows = remainingRows.filter((team) => team.team !== headToHeadWinner.team);
+      position += 1;
+    }
+
+    start = end;
+  }
+}
+
+function guaranteedGroupSlots(group) {
+  const groupMatches = scoredGroupMatches(group);
+  const teams = teamsInGroup(group);
+  const teamsByPosition = teams.map(() => new Set());
+  const baseScenarioMatches = groupMatches.map((match) => ({ ...match, result: match.result ? { ...match.result } : null }));
+
+  function scenarioRows() {
+    return Object.fromEntries(teams.map((team) => [team, emptyTeamRow(team)]));
+  }
+
+  function collectScenario(index, rows, scenarioMatches) {
+    if (index === groupMatches.length) {
+      collectScenarioPositions(rows, scenarioMatches, teamsByPosition);
+      return;
+    }
+
+    const match = scenarioMatches[index];
+    if (match.result) {
+      applyScoreToRows(rows, match, match.result);
+      collectScenario(index + 1, rows, scenarioMatches);
+      return;
+    }
+
+    ["home", "draw", "away"].forEach((outcome) => {
+      const nextRows = Object.fromEntries(Object.entries(rows).map(([team, row]) => [team, { ...row }]));
+      const nextScenarioMatches = scenarioMatches.map((scenarioMatch, scenarioIndex) =>
+        scenarioIndex === index ? { ...scenarioMatch, result: simulatedScore(outcome) } : scenarioMatch
+      );
+      applyScoreToRows(nextRows, nextScenarioMatches[index], nextScenarioMatches[index].result);
+      collectScenario(index + 1, nextRows, nextScenarioMatches);
+    });
+  }
+
+  collectScenario(0, scenarioRows(), baseScenarioMatches);
+  return teamsByPosition.map((positionTeams) => (positionTeams.size === 1 ? [...positionTeams][0] : null));
+}
+
+function resolvedGroupPosition(group, position) {
+  if (groupIsComplete(group)) {
+    return calculateActualGroupTables()[group]?.[position - 1]?.team || null;
+  }
+
+  return guaranteedGroupSlots(group)[position - 1] || null;
+}
+
 function sourceDescription(source) {
   const groupSlot = source.match(/^([123])([A-L](?:\/[A-L])*)$/);
   if (groupSlot) {
@@ -1377,10 +1706,9 @@ function remoteKnockoutTeam(number, index) {
 function resolveSource(source) {
   const groupSlot = source.match(/^([123])([A-L])$/);
   if (groupSlot) {
-    const position = Number(groupSlot[1]) - 1;
+    const position = Number(groupSlot[1]);
     const group = groupSlot[2];
-    if (!groupIsComplete(group)) return null;
-    return calculateActualGroupTables()[group]?.[position]?.team || null;
+    return resolvedGroupPosition(group, position);
   }
 
   const matchSlot = source.match(/^([WL])(\d+)$/);
@@ -1414,9 +1742,13 @@ function possibleTeamsForSource(source, seen = new Set()) {
 
   const thirdPlaceSlot = source.match(/^3([A-L](?:\/[A-L])*)$/);
   if (thirdPlaceSlot) {
+    const resolved = resolveSource(source);
+    if (resolved) return [resolved];
+
     return thirdPlaceSlot[1].split("/").flatMap((group) => {
       const table = calculateActualGroupTables()[group] || [];
-      return groupIsComplete(group) && table[2] ? [table[2].team] : teamsInGroup(group);
+      const groupThird = resolvedGroupPosition(group, 3);
+      return groupThird ? [groupThird] : table[2] && groupIsComplete(group) ? [table[2].team] : teamsInGroup(group);
     });
   }
 
@@ -1478,6 +1810,10 @@ function swedishKnockoutTime(remoteMatch) {
   return `${parts.day} ${parts.month} · kl. ${parts.hour}:${parts.minute}`;
 }
 
+function swedishFixtureDateTime(fixture) {
+  return `${fixture.date} ${fixture.time}`;
+}
+
 function renderKnockoutTabs(activeStage = "round32") {
   document.querySelector("#knockout-stage-tabs").innerHTML = knockoutStages
     .map(
@@ -1505,9 +1841,9 @@ function renderKnockout(activeStage = "round32") {
 
   document.querySelector("#bracket-grid").innerHTML = stageMatches
     .map((definition) => {
-      const remoteMatch = remoteKnockoutMatches.get(definition.number);
+      const fixture = knockoutFixture(definition);
       const result = knockoutResult(definition.number);
-      const scheduleText = swedishKnockoutTime(remoteMatch);
+      const scheduleText = swedishFixtureDateTime(fixture);
       return `
         <article class="bracket-match ${result ? "is-played" : ""}">
           <div class="bracket-match-meta">
@@ -1519,7 +1855,7 @@ function renderKnockout(activeStage = "round32") {
             <strong class="bracket-score">${knockoutScoreText(result)}</strong>
             ${knockoutSlotMarkup(definition, 1)}
           </div>
-          ${remoteMatch?.ground ? `<p class="bracket-ground">${escapeHtml(remoteMatch.ground)}</p>` : ""}
+          <p class="bracket-ground">${escapeHtml(fixture.venue)}</p>
         </article>
       `;
     })
@@ -1587,7 +1923,56 @@ function renderFilters() {
 
 function renderMatches(group = "all") {
   const list = document.querySelector("#match-list");
-  const hidePlayed = document.querySelector("#hide-played-matches")?.checked;
+  const matchView = currentMatchView();
+  const filters = document.querySelector(".filters");
+  const hidePlayedToggle = document.querySelector("#hide-played-matches");
+
+  document.querySelector("#matches-eyebrow").textContent = matchView === "groups" ? "Arkiv" : "Slutspel";
+  document.querySelector("#matches-title").textContent = matchView === "groups" ? "Gruppspel" : "Sextondelsmatcher";
+
+  if (filters) filters.hidden = matchView !== "groups";
+  if (hidePlayedToggle) hidePlayedToggle.closest(".match-toggle").hidden = matchView !== "groups";
+
+  if (matchView === "round32") {
+    const fixtures = knockoutMatches
+      .filter((match) => match.stage === "round32")
+      .map(knockoutFixture)
+      .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
+
+    list.innerHTML = fixtures.length
+      ? fixtures
+          .map(
+            (match) => `
+        <button class="match-card" type="button" data-match="${match.number}">
+          <span class="match-card-grid">
+            <span class="match-number">Match ${match.number}<br>Sextondel</span>
+            <span class="teams">
+              <span class="team-line"><span class="flag">${flags[match.home] || ""}</span>${match.home}</span>
+              <span class="team-line"><span class="flag">${flags[match.away] || ""}</span>${match.away}</span>
+            </span>
+            <span class="match-meta">
+              ${resultMarkup(match)}<br>
+              ${swedishFixtureDateTime(match)}<br>
+              ${match.venue}
+            </span>
+          </span>
+        </button>
+      `
+          )
+          .join("")
+      : `<p class="empty-fixtures">Inga sextondelsmatcher att visa.</p>`;
+    return;
+  }
+
+  const groupMatches = matches.filter((match) => group === "all" || match.group === group);
+  const hasUnplayedMatches = groupMatches.some((match) => !match.result);
+  const hidePlayed = Boolean(hidePlayedToggle?.checked && hasUnplayedMatches);
+
+  if (hidePlayedToggle) {
+    hidePlayedToggle.disabled = !hasUnplayedMatches;
+    if (!hasUnplayedMatches) hidePlayedToggle.checked = false;
+  }
+
   const visibleMatches = matches.filter((match) => {
     const matchesGroup = group === "all" || match.group === group;
     const matchesPlayedFilter = !hidePlayed || !match.result;
@@ -1607,7 +1992,7 @@ function renderMatches(group = "all") {
             </span>
             <span class="match-meta">
               ${resultMarkup(match)}<br>
-              ${match.date} ${match.time}<br>
+              ${swedishFixtureDateTime(match)}<br>
               ${match.venue}
             </span>
           </span>
@@ -1620,8 +2005,13 @@ function renderMatches(group = "all") {
 
 function openMatch(matchNumber) {
   const match = matches.find((item) => item.number === matchNumber);
+  if (!match) {
+    openKnockoutMatch(matchNumber);
+    return;
+  }
+
   const dialog = document.querySelector("#match-dialog");
-  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Grupp ${match.group} · ${match.date} ${match.time}`;
+  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Grupp ${match.group} · ${swedishFixtureDateTime(match)}`;
   document.querySelector("#dialog-title").textContent = `${teamLabel(match.home)} vs ${teamLabel(match.away)}`;
   document.querySelector("#dialog-score").innerHTML = `
     <span>${teamLabel(match.home)}</span>
@@ -1645,6 +2035,47 @@ function openMatch(matchNumber) {
           <div>
             <strong>${player}</strong>
             <p class="muted">${prediction ? `Tips: ${scoreText(prediction)} (${outcome(prediction)})` : "Inväntar tips"}</p>
+          </div>
+          <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
+          <span class="points">${score.points}p</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  dialog.showModal();
+}
+
+function openKnockoutMatch(matchNumber) {
+  const definition = knockoutDefinition(matchNumber);
+  if (!definition) return;
+
+  const match = knockoutFixture(definition);
+  const dialog = document.querySelector("#match-dialog");
+  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Sextondel · ${swedishFixtureDateTime(match)} · ${match.venue}`;
+  document.querySelector("#dialog-title").textContent = `${teamLabel(match.home)} vs ${teamLabel(match.away)}`;
+  document.querySelector("#dialog-score").innerHTML = `
+    <span>${teamLabel(match.home)}</span>
+    ${resultMarkup(match)}
+    <span>${teamLabel(match.away)}</span>
+  `;
+  document.querySelector("#tips-list").innerHTML = players
+    .map((player) => {
+      const prediction = knockoutPredictions[player][match.number];
+      const score = pointsFor(prediction, match.result);
+      const resultClass =
+        prediction && match.result
+          ? score.exact
+            ? "is-exact-pick"
+            : score.correctOutcome
+              ? "is-correct-pick"
+              : "is-wrong-pick"
+          : "";
+      return `
+        <div class="tip-row ${resultClass}">
+          <div>
+            <strong>${player}</strong>
+            <p class="muted">${prediction ? `Tips: ${scoreText(prediction)} (${outcome(prediction)})` : "Väntar på tips"}</p>
           </div>
           <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
           <span class="points">${score.points}p</span>
@@ -1726,6 +2157,14 @@ document.querySelector(".filters").addEventListener("click", (event) => {
   renderMatches(button.dataset.group);
 });
 
+document.querySelector(".match-view-tabs").addEventListener("click", (event) => {
+  const button = event.target.closest(".match-view-button");
+  if (!button) return;
+  document.querySelectorAll(".match-view-button").forEach((item) => item.classList.remove("is-active"));
+  button.classList.add("is-active");
+  renderMatches(currentMatchFilter());
+});
+
 document.querySelector("#hide-played-matches").addEventListener("change", () => {
   renderMatches(currentMatchFilter());
 });
@@ -1778,6 +2217,10 @@ function currentMatchFilter() {
   return document.querySelector(".filter-button.is-active")?.dataset.group || "all";
 }
 
+function currentMatchView() {
+  return document.querySelector(".match-view-button.is-active")?.dataset.matchView || "round32";
+}
+
 function renderApp() {
   renderLeaderboard();
   renderMatches(currentMatchFilter());
@@ -1788,6 +2231,7 @@ function renderApp() {
 
 async function initializeApp() {
   renderFilters();
+  applyActualGroupResults();
   renderApp();
   const appliedResults = await loadRemoteResults();
   if (appliedResults > 0) renderApp();
