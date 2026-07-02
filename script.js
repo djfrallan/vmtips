@@ -324,6 +324,10 @@ const knockoutMatches = [
 
 const remoteKnockoutMatches = new Map();
 
+function knockoutStageLabel(stageId) {
+  return knockoutStages.find((stage) => stage.id === stageId)?.label || sourceDescription(stageId);
+}
+
 const knockoutSchedule = {
   73: { date: "2026-06-28", time: "21:00", venue: "SoFi Stadium, Inglewood" },
   74: { date: "2026-06-29", time: "22:30", venue: "Gillette Stadium, Foxborough" },
@@ -1188,6 +1192,34 @@ function pointsFor(prediction, result) {
   };
 }
 
+function predictionForFixture(player, fixture) {
+  return fixture.type === "knockout"
+    ? knockoutPredictions[player]?.[fixture.number]
+    : predictions[player]?.[fixture.number];
+}
+
+function scoringFixtures() {
+  return [
+    ...matches.map(groupFixture),
+    ...knockoutMatches.map(knockoutFixture),
+  ];
+}
+
+function scoringStatsForPlayer(player) {
+  return scoringFixtures().reduce(
+    (total, fixture) => {
+      const prediction = predictionForFixture(player, fixture);
+      const score = pointsFor(prediction, fixture.result);
+      total.points += score.points;
+      total.correctOutcomes += score.correctOutcome ? 1 : 0;
+      total.exacts += score.exact ? 1 : 0;
+      total.submitted += prediction ? 1 : 0;
+      return total;
+    },
+    { player, points: 0, correctOutcomes: 0, exacts: 0, submitted: 0 }
+  );
+}
+
 function scoreText(score) {
   return score ? `${score.home}-${score.away}` : "Ej spelad";
 }
@@ -1332,19 +1364,7 @@ function addDays(date, days) {
 
 function calculateLeaderboard() {
   return players
-    .map((player) => {
-      const stats = matches.reduce(
-        (total, match) => {
-          const score = pointsFor(predictions[player][match.number], match.result);
-          total.points += score.points;
-          total.correctOutcomes += score.correctOutcome ? 1 : 0;
-          total.exacts += score.exact ? 1 : 0;
-          return total;
-        },
-        { player, points: 0, correctOutcomes: 0, exacts: 0 }
-      );
-      return stats;
-    })
+    .map((player) => scoringStatsForPlayer(player))
     .sort((a, b) => b.points - a.points || b.exacts - a.exacts || a.player.localeCompare(b.player, "sv"));
 }
 
@@ -1381,7 +1401,7 @@ function knockoutFixture(definition) {
   const schedule = knockoutSchedule[definition.number] || {};
   return {
     type: "knockout",
-    stage: definition.stage === "round32" ? "Sextondel" : sourceDescription(definition.stage),
+    stage: knockoutStageLabel(definition.stage),
     number: definition.number,
     date: schedule.date || "",
     time: schedule.time || "",
@@ -1456,18 +1476,7 @@ function renderLiveFixtures() {
 }
 
 function playerStats(player) {
-  return matches.reduce(
-    (total, match) => {
-      const prediction = predictions[player][match.number];
-      const score = pointsFor(prediction, match.result);
-      total.points += score.points;
-      total.correctOutcomes += score.correctOutcome ? 1 : 0;
-      total.exacts += score.exact ? 1 : 0;
-      total.submitted += prediction ? 1 : 0;
-      return total;
-    },
-    { points: 0, correctOutcomes: 0, exacts: 0, submitted: 0 }
-  );
+  return scoringStatsForPlayer(player);
 }
 
 function submittedCount(player) {
@@ -1830,25 +1839,29 @@ function knockoutDefinition(number) {
   return knockoutMatches.find((match) => match.number === Number(number));
 }
 
+function normalizedScorePair(pair) {
+  if (!Array.isArray(pair) || pair.length !== 2) return null;
+  if (pair.some((value) => value === null || value === "")) return null;
+  const normalized = pair.map((value) => Number(value));
+  return normalized.every(Number.isInteger) ? normalized : null;
+}
+
 function knockoutResult(number) {
   const remoteMatch = remoteKnockoutMatches.get(Number(number));
   const score = remoteMatch?.score;
   if (!score) return null;
 
-  const finalScore =
-    (Array.isArray(score.et) && score.et.length === 2 && score.et) ||
-    (Array.isArray(score.ft) && score.ft.length === 2 && score.ft);
-  if (!finalScore || !finalScore.every(Number.isInteger)) return null;
+  const fullTime = normalizedScorePair(score.ft);
+  if (!fullTime) return null;
+
+  const extraTime = normalizedScorePair(score.et);
 
   const penalties =
-    (Array.isArray(score.p) && score.p.length === 2 && score.p.every(Number.isInteger) && score.p) ||
-    (Array.isArray(score.pen) && score.pen.length === 2 && score.pen.every(Number.isInteger) && score.pen) ||
-    (Array.isArray(score.penalties) &&
-      score.penalties.length === 2 &&
-      score.penalties.every(Number.isInteger) &&
-      score.penalties) ||
+    normalizedScorePair(score.p) ||
+    normalizedScorePair(score.pen) ||
+    normalizedScorePair(score.penalties) ||
     null;
-  return { home: finalScore[0], away: finalScore[1], penalties };
+  return { home: fullTime[0], away: fullTime[1], extraTime, penalties };
 }
 
 function remoteKnockoutTeam(number, index) {
@@ -1877,7 +1890,9 @@ function resolveSource(source) {
 
   let winnerIndex = null;
   if (result.home !== result.away) winnerIndex = result.home > result.away ? 0 : 1;
-  else if (result.penalties && result.penalties[0] !== result.penalties[1]) {
+  else if (result.extraTime && result.extraTime[0] !== result.extraTime[1]) {
+    winnerIndex = result.extraTime[0] > result.extraTime[1] ? 0 : 1;
+  } else if (result.penalties && result.penalties[0] !== result.penalties[1]) {
     winnerIndex = result.penalties[0] > result.penalties[1] ? 0 : 1;
   }
   if (winnerIndex === null) return null;
@@ -1936,8 +1951,9 @@ function knockoutSlotMarkup(definition, index) {
 
 function knockoutScoreText(result) {
   if (!result) return "–";
+  const extraTime = result.extraTime ? ` (${result.extraTime[0]}–${result.extraTime[1]} e.f.)` : "";
   const penalties = result.penalties ? ` (${result.penalties[0]}–${result.penalties[1]} str.)` : "";
-  return `${result.home}–${result.away}${penalties}`;
+  return `${result.home}–${result.away}${extraTime}${penalties}`;
 }
 
 function swedishKnockoutTime(remoteMatch) {
@@ -2203,7 +2219,8 @@ function openKnockoutMatch(matchNumber) {
 
   const match = knockoutFixture(definition);
   const dialog = document.querySelector("#match-dialog");
-  document.querySelector("#dialog-meta").textContent = `Match ${match.number} · Sextondel · ${swedishFixtureDateTime(match)} · ${match.venue}`;
+  document.querySelector("#dialog-meta").textContent =
+    `Match ${match.number} · ${match.stage} · ${swedishFixtureDateTime(match)} · ${match.venue}`;
   document.querySelector("#dialog-title").textContent = `${teamLabel(match.home)} vs ${teamLabel(match.away)}`;
   document.querySelector("#dialog-score").innerHTML = `
     <span>${teamLabel(match.home)}</span>
@@ -2241,10 +2258,11 @@ function openKnockoutMatch(matchNumber) {
 function openPlayer(player) {
   const dialog = document.querySelector("#player-dialog");
   const stats = playerStats(player);
+  const submittedGroup = matches.filter((match) => predictions[player][match.number]).length;
   const round32Definitions = round32Fixtures();
   const submittedRound32 = round32Definitions.filter((match) => knockoutPredictions[player][match.number]).length;
   document.querySelector("#player-dialog-meta").textContent =
-    `${stats.submitted}/${matches.length} gruppspel · ${submittedRound32}/${round32Definitions.length} sextondel`;
+    `${submittedGroup}/${matches.length} gruppspel · ${submittedRound32}/${round32Definitions.length} sextondel`;
   document.querySelector("#player-dialog-title").textContent = player;
   document.querySelector("#player-summary").innerHTML = `
     <div class="summary-stat">
