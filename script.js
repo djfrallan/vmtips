@@ -1246,6 +1246,20 @@ const knockoutPredictions = Object.fromEntries(
   players.map((player) => [player, { ...emptyKnockoutPredictions, ...(submittedKnockoutPredictions[player] || {}) }])
 );
 
+window.vmTipsDebug = {
+  dataVersion: "20260704-debug-round16-picks",
+  pick(player, matchNumber) {
+    return knockoutPredictions[player]?.[Number(matchNumber)] || null;
+  },
+  match(matchNumber) {
+    const definition = knockoutDefinition(Number(matchNumber));
+    return definition ? knockoutFixture(definition) : null;
+  },
+  round16() {
+    return Object.fromEntries(players.map((player) => [player, this.pick(player, 90)]));
+  },
+};
+
 function outcome(score) {
   if (!score) return null;
   if (score.home > score.away) return "1";
