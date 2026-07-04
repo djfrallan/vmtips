@@ -1057,6 +1057,14 @@ const submittedKnockoutPredictions = {
     88: { home: 1, away: 1 },
     86: { home: 3, away: 0 },
     87: { home: 2, away: 1 },
+    89: { home: 0, away: 2 },
+    90: { home: 0, away: 1 },
+    91: { home: 2, away: 1 },
+    92: { home: 1, away: 1 },
+    93: { home: 1, away: 1 },
+    94: { home: 1, away: 2 },
+    95: { home: 2, away: 0 },
+    96: { home: 1, away: 0 },
   },
   "Rasmus": {
     73: { home: 1, away: 3 },
@@ -1075,6 +1083,14 @@ const submittedKnockoutPredictions = {
     86: { home: 5, away: 0 },
     87: { home: 0, away: 2 },
     88: { home: 1, away: 2 },
+    89: { home: 1, away: 3 },
+    90: { home: 1, away: 1 },
+    91: { home: 2, away: 1 },
+    92: { home: 1, away: 2 },
+    93: { home: 1, away: 1 },
+    94: { home: 2, away: 1 },
+    95: { home: 3, away: 0 },
+    96: { home: 1, away: 1 },
   },
   "Måns": {
     73: { home: 2, away: 1 },
@@ -1093,6 +1109,14 @@ const submittedKnockoutPredictions = {
     86: { home: 3, away: 0 },
     87: { home: 0, away: 2 },
     88: { home: 2, away: 0 },
+    89: { home: 1, away: 3 },
+    90: { home: 0, away: 2 },
+    91: { home: 2, away: 2 },
+    92: { home: 1, away: 1 },
+    93: { home: 0, away: 2 },
+    94: { home: 0, away: 2 },
+    95: { home: 3, away: 1 },
+    96: { home: 2, away: 0 },
   },
   "Fredrik": {
     73: { home: 2, away: 1 },
@@ -1111,6 +1135,14 @@ const submittedKnockoutPredictions = {
     86: { home: 3, away: 0 },
     87: { home: 1, away: 1 },
     88: { home: 2, away: 2 },
+    89: { home: 0, away: 3 },
+    90: { home: 1, away: 2 },
+    91: { home: 1, away: 1 },
+    92: { home: 2, away: 1 },
+    93: { home: 2, away: 3 },
+    94: { home: 1, away: 3 },
+    95: { home: 2, away: 0 },
+    96: { home: 1, away: 2 },
   },
   "Anders": {
     73: { home: 1, away: 2 },
@@ -1129,6 +1161,14 @@ const submittedKnockoutPredictions = {
     86: { home: 3, away: 0 },
     87: { home: 1, away: 0 },
     88: { home: 0, away: 0 },
+    89: { home: 0, away: 2 },
+    90: { home: 0, away: 1 },
+    91: { home: 1, away: 1 },
+    92: { home: 1, away: 0 },
+    93: { home: 0, away: 0 },
+    94: { home: 1, away: 0 },
+    95: { home: 2, away: 0 },
+    96: { home: 1, away: 1 },
   },
   "Axel": {
     73: { home: 1, away: 1 },
@@ -1165,6 +1205,14 @@ const submittedKnockoutPredictions = {
     86: { home: 3, away: 0 },
     87: { home: 1, away: 1 },
     88: { home: 2, away: 1 },
+    89: { home: 0, away: 3 },
+    90: { home: 1, away: 2 },
+    91: { home: 2, away: 2 },
+    92: { home: 1, away: 2 },
+    93: { home: 2, away: 3 },
+    94: { home: 1, away: 1 },
+    95: { home: 2, away: 1 },
+    96: { home: 3, away: 1 },
   },
   "Nils": {
     73: { home: 1, away: 3 },
@@ -1183,6 +1231,14 @@ const submittedKnockoutPredictions = {
     86: { home: 0, away: 0 },
     87: { home: 1, away: 3 },
     88: { home: 1, away: 3 },
+    89: { home: 1, away: 1 },
+    90: { home: 1, away: 1 },
+    91: { home: 1, away: 2 },
+    92: { home: 1, away: 3 },
+    93: { home: 2, away: 2 },
+    94: { home: 2, away: 1 },
+    95: { home: 3, away: 2 },
+    96: { home: 1, away: 1 },
   },
 };
 const emptyKnockoutPredictions = Object.fromEntries(knockoutMatches.map((match) => [match.number, null]));
@@ -1665,6 +1721,16 @@ function activeKnockoutStage(referenceDate = new Date()) {
   return [...knockoutStages]
     .reverse()
     .find((stage) => knockoutFixtures(stage.id).some((match) => match.date && match.date <= today)) || knockoutStages[0];
+}
+
+function profileKnockoutStages() {
+  const activeIndex = knockoutStages.findIndex((stage) => stage.id === activeKnockoutStage().id);
+  if (activeIndex < 0) return knockoutStages;
+  return [
+    knockoutStages[activeIndex],
+    ...knockoutStages.slice(0, activeIndex).reverse(),
+    ...knockoutStages.slice(activeIndex + 1),
+  ];
 }
 
 function round32Fixtures() {
@@ -2333,7 +2399,7 @@ function openPlayer(player) {
       });
     })
     .join("");
-  const knockoutPickSections = knockoutStages
+  const knockoutPickSections = profileKnockoutStages()
     .map((stage) => {
       const rows = knockoutFixtures(stage.id)
         .map((match) => {
