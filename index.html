@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260628-cleanup">
+    <link rel="stylesheet" href="styles.css?v=20260704-knockout-stages">
   </head>
   <body>
     <div class="app-shell">
@@ -52,8 +52,8 @@
             </section>
 
             <aside class="panel score-panel">
-              <p class="eyebrow">Sextondel spelade</p>
-              <h2 id="played-count">0/16</h2>
+              <p class="eyebrow" id="played-label">Åttondel spelade</p>
+              <h2 id="played-count">0/8</h2>
               <div class="live-fixtures">
                 <section class="fixture-block">
                   <div class="fixture-heading">
@@ -78,10 +78,10 @@
           <section class="matches-header">
             <div>
               <p class="eyebrow" id="matches-eyebrow">Slutspel</p>
-              <h2 id="matches-title">Sextondelsmatcher</h2>
+              <h2 id="matches-title">Åttondelsfinaler</h2>
             </div>
             <div class="match-view-tabs" aria-label="Välj matchvy">
-              <button class="match-view-button is-active" type="button" data-match-view="round32">Sextondel</button>
+              <button class="match-view-button is-active" type="button" data-match-view="round16">Åttondel</button>
               <button class="match-view-button" type="button" data-match-view="groups">Gruppspel</button>
             </div>
             <div class="filters" aria-label="Gruppfilter" hidden>
@@ -161,6 +161,6 @@
       <div class="player-picks" id="player-picks"></div>
     </dialog>
 
-    <script src="script.js?v=20260702-knockout-scoring"></script>
+    <script src="script.js?v=20260704-knockout-stages"></script>
   </body>
 </html>

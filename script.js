@@ -345,6 +345,22 @@ const knockoutSchedule = {
   86: { date: "2026-07-04", time: "00:00", venue: "Hard Rock Stadium, Miami Gardens" },
   87: { date: "2026-07-04", time: "03:30", venue: "Arrowhead Stadium, Kansas City" },
   88: { date: "2026-07-03", time: "20:00", venue: "AT&T Stadium, Arlington" },
+  89: { date: "2026-07-04", time: "23:00", venue: "Lincoln Financial Field, Philadelphia" },
+  90: { date: "2026-07-04", time: "19:00", venue: "NRG Stadium, Houston" },
+  91: { date: "2026-07-05", time: "22:00", venue: "MetLife Stadium, East Rutherford" },
+  92: { date: "2026-07-06", time: "02:00", venue: "Estadio Azteca, Mexico City" },
+  93: { date: "2026-07-06", time: "21:00", venue: "AT&T Stadium, Arlington" },
+  94: { date: "2026-07-07", time: "02:00", venue: "Lumen Field, Seattle" },
+  95: { date: "2026-07-07", time: "18:00", venue: "Mercedes-Benz Stadium, Atlanta" },
+  96: { date: "2026-07-07", time: "22:00", venue: "BC Place, Vancouver" },
+  97: { date: "2026-07-09", time: "22:00", venue: "Gillette Stadium, Foxborough" },
+  98: { date: "2026-07-10", time: "21:00", venue: "SoFi Stadium, Inglewood" },
+  99: { date: "2026-07-11", time: "23:00", venue: "Hard Rock Stadium, Miami Gardens" },
+  100: { date: "2026-07-12", time: "03:00", venue: "Arrowhead Stadium, Kansas City" },
+  101: { date: "2026-07-14", time: "21:00", venue: "AT&T Stadium, Arlington" },
+  102: { date: "2026-07-15", time: "21:00", venue: "Mercedes-Benz Stadium, Atlanta" },
+  103: { date: "2026-07-18", time: "23:00", venue: "Hard Rock Stadium, Miami Gardens" },
+  104: { date: "2026-07-19", time: "21:00", venue: "MetLife Stadium, East Rutherford" },
 };
 
 const submittedPredictions = {
@@ -1391,9 +1407,11 @@ function renderLeaderboard() {
     )
     .join("");
 
-  const round32Matches = round32Fixtures();
-  const played = round32Matches.filter((match) => knockoutResult(match.number)).length;
-  document.querySelector("#played-count").textContent = `${played}/${round32Matches.length}`;
+  const activeStage = activeKnockoutStage();
+  const stageMatches = knockoutFixtures(activeStage.id);
+  const played = stageMatches.filter((match) => knockoutResult(match.number)).length;
+  document.querySelector("#played-count").textContent = `${played}/${stageMatches.length}`;
+  document.querySelector("#played-label").textContent = `${activeStage.label} spelade`;
   renderLiveFixtures();
 }
 
@@ -1430,7 +1448,7 @@ function groupFixture(match) {
 function allFixtures() {
   return [
     ...matches.map(groupFixture),
-    ...round32Fixtures(),
+    ...knockoutFixtures(),
   ].sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
 }
 
@@ -1635,11 +1653,22 @@ function renderSimulation(player = simulationPlayers()[0]) {
     .join("");
 }
 
-function round32Fixtures() {
+function knockoutFixtures(stageId) {
   return knockoutMatches
-    .filter((match) => match.stage === "round32")
+    .filter((match) => !stageId || match.stage === stageId)
     .map(knockoutFixture)
     .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`) || a.number - b.number);
+}
+
+function activeKnockoutStage(referenceDate = new Date()) {
+  const today = localDateKey(referenceDate);
+  return [...knockoutStages]
+    .reverse()
+    .find((stage) => knockoutFixtures(stage.id).some((match) => match.date && match.date <= today)) || knockoutStages[0];
+}
+
+function round32Fixtures() {
+  return knockoutFixtures("round32");
 }
 
 function groupIsComplete(group) {
@@ -2091,20 +2120,35 @@ function renderFilters() {
   );
 }
 
+function renderMatchViewTabs(activeView = activeKnockoutStage().id) {
+  document.querySelector(".match-view-tabs").innerHTML = [
+    ...knockoutStages.map(
+      (stage) => `
+        <button class="match-view-button ${stage.id === activeView ? "is-active" : ""}" type="button" data-match-view="${stage.id}">
+          ${stage.label}
+        </button>
+      `
+    ),
+    `<button class="match-view-button ${activeView === "groups" ? "is-active" : ""}" type="button" data-match-view="groups">Gruppspel</button>`,
+  ].join("");
+}
+
 function renderMatches(group = "all") {
   const list = document.querySelector("#match-list");
   const matchView = currentMatchView();
   const filters = document.querySelector(".filters");
   const hidePlayedToggle = document.querySelector("#hide-played-matches");
+  const selectedStage = knockoutStages.find((stage) => stage.id === matchView);
 
   document.querySelector("#matches-eyebrow").textContent = matchView === "groups" ? "Arkiv" : "Slutspel";
-  document.querySelector("#matches-title").textContent = matchView === "groups" ? "Gruppspel" : "Sextondelsmatcher";
+  document.querySelector("#matches-title").textContent =
+    matchView === "groups" ? "Gruppspel" : selectedStage?.title || "Slutspelsmatcher";
 
   if (filters) filters.hidden = matchView !== "groups";
   if (hidePlayedToggle) hidePlayedToggle.closest(".match-toggle").hidden = matchView !== "groups";
 
-  if (matchView === "round32") {
-    const fixtures = round32Fixtures();
+  if (selectedStage) {
+    const fixtures = knockoutFixtures(selectedStage.id);
 
     list.innerHTML = fixtures.length
       ? fixtures
@@ -2112,7 +2156,7 @@ function renderMatches(group = "all") {
             (match) => `
         <button class="match-card" type="button" data-match="${match.number}">
           <span class="match-card-grid">
-            <span class="match-number">Match ${match.number}<br>Sextondel</span>
+            <span class="match-number">Match ${match.number}<br>${match.stage}</span>
             <span class="teams">
               <span class="team-line"><span class="flag">${flags[match.home] || ""}</span>${match.home}</span>
               <span class="team-line"><span class="flag">${flags[match.away] || ""}</span>${match.away}</span>
@@ -2127,7 +2171,7 @@ function renderMatches(group = "all") {
       `
           )
           .join("")
-      : `<p class="empty-fixtures">Inga sextondelsmatcher att visa.</p>`;
+      : `<p class="empty-fixtures">Inga ${selectedStage.label.toLowerCase()}smatcher att visa.</p>`;
     return;
   }
 
@@ -2259,10 +2303,10 @@ function openPlayer(player) {
   const dialog = document.querySelector("#player-dialog");
   const stats = playerStats(player);
   const submittedGroup = matches.filter((match) => predictions[player][match.number]).length;
-  const round32Definitions = round32Fixtures();
-  const submittedRound32 = round32Definitions.filter((match) => knockoutPredictions[player][match.number]).length;
+  const knockoutDefinitions = knockoutFixtures();
+  const submittedKnockout = knockoutDefinitions.filter((match) => knockoutPredictions[player][match.number]).length;
   document.querySelector("#player-dialog-meta").textContent =
-    `${submittedGroup}/${matches.length} gruppspel · ${submittedRound32}/${round32Definitions.length} sextondel`;
+    `${submittedGroup}/${matches.length} gruppspel · ${submittedKnockout}/${knockoutDefinitions.length} slutspel`;
   document.querySelector("#player-dialog-title").textContent = player;
   document.querySelector("#player-summary").innerHTML = `
     <div class="summary-stat">
@@ -2289,21 +2333,28 @@ function openPlayer(player) {
       });
     })
     .join("");
-  const round32PickRows = round32Definitions
-    .map((match) => {
-      return playerPickRow({
-        match,
-        prediction: knockoutPredictions[player][match.number],
-        result: match.result,
-        meta: `Match ${match.number}<br>Sextondel`,
-        dateTime: swedishFixtureDateTime(match),
-      });
+  const knockoutPickSections = knockoutStages
+    .map((stage) => {
+      const rows = knockoutFixtures(stage.id)
+        .map((match) => {
+          return playerPickRow({
+            match,
+            prediction: knockoutPredictions[player][match.number],
+            result: match.result,
+            meta: `Match ${match.number}<br>${match.stage}`,
+            dateTime: swedishFixtureDateTime(match),
+          });
+        })
+        .join("");
+      return `
+        <div class="player-pick-section">${stage.label}</div>
+        ${rows}
+      `;
     })
     .join("");
 
   document.querySelector("#player-picks").innerHTML = `
-    <div class="player-pick-section">Sextondel</div>
-    ${round32PickRows}
+    ${knockoutPickSections}
     <div class="player-pick-section">Gruppspel</div>
     ${groupPickRows}
   `;
@@ -2331,7 +2382,7 @@ function playerPickRow({ match, prediction, result, meta, dateTime }) {
         <p class="muted">${dateTime}</p>
       </div>
       <div class="pick-score">
-        <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "-"}</strong>
+        <strong class="${prediction ? "" : "empty-pick"}">${prediction ? scoreText(prediction) : "Väntar på tips"}</strong>
         <span class="outcome-pill">${prediction ? outcome(prediction) : "-"}</span>
       </div>
     </div>
@@ -2416,14 +2467,16 @@ function currentMatchFilter() {
 }
 
 function currentMatchView() {
-  return document.querySelector(".match-view-button.is-active")?.dataset.matchView || "round32";
+  return document.querySelector(".match-view-button.is-active")?.dataset.matchView || activeKnockoutStage().id;
 }
 
 function renderApp() {
+  const matchView = currentMatchView();
   renderLeaderboard();
+  renderMatchViewTabs(matchView);
   renderMatches(currentMatchFilter());
   renderSimulation(document.querySelector(".sim-player-button.is-active")?.dataset.player || simulationPlayers()[0]);
-  renderKnockout(document.querySelector(".knockout-stage-button.is-active")?.dataset.stage || "round32");
+  renderKnockout(document.querySelector(".knockout-stage-button.is-active")?.dataset.stage || activeKnockoutStage().id);
   renderActualGroupTable(document.querySelector(".group-selector-button.is-active")?.dataset.group || "A");
 }
 
