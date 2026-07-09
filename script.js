@@ -1065,6 +1065,10 @@ const submittedKnockoutPredictions = {
     94: { home: 1, away: 2 },
     95: { home: 2, away: 0 },
     96: { home: 1, away: 0 },
+    97: { home: 2, away: 1 },
+    98: { home: 1, away: 0 },
+    99: { home: 1, away: 2 },
+    100: { home: 2, away: 0 },
   },
   "Rasmus": {
     73: { home: 1, away: 3 },
@@ -1091,6 +1095,10 @@ const submittedKnockoutPredictions = {
     94: { home: 2, away: 1 },
     95: { home: 3, away: 0 },
     96: { home: 1, away: 1 },
+    97: { home: 2, away: 1 },
+    98: { home: 2, away: 1 },
+    99: { home: 1, away: 1 },
+    100: { home: 2, away: 0 },
   },
   "Måns": {
     73: { home: 2, away: 1 },
@@ -1117,6 +1125,10 @@ const submittedKnockoutPredictions = {
     94: { home: 0, away: 2 },
     95: { home: 3, away: 1 },
     96: { home: 2, away: 0 },
+    97: { home: 2, away: 1 },
+    98: { home: 2, away: 3 },
+    99: { home: 1, away: 1 },
+    100: { home: 1, away: 0 },
   },
   "Fredrik": {
     73: { home: 2, away: 1 },
@@ -1143,6 +1155,10 @@ const submittedKnockoutPredictions = {
     94: { home: 1, away: 3 },
     95: { home: 2, away: 0 },
     96: { home: 1, away: 2 },
+    97: { home: 2, away: 1 },
+    98: { home: 1, away: 2 },
+    99: { home: 2, away: 1 },
+    100: { home: 2, away: 2 },
   },
   "Anders": {
     73: { home: 1, away: 2 },
@@ -1169,6 +1185,10 @@ const submittedKnockoutPredictions = {
     94: { home: 1, away: 0 },
     95: { home: 2, away: 0 },
     96: { home: 1, away: 1 },
+    97: { home: 1, away: 0 },
+    98: { home: 0, away: 0 },
+    99: { home: 1, away: 2 },
+    100: { home: 0, away: 0 },
   },
   "Axel": {
     73: { home: 1, away: 1 },
@@ -1213,6 +1233,10 @@ const submittedKnockoutPredictions = {
     94: { home: 1, away: 1 },
     95: { home: 2, away: 1 },
     96: { home: 3, away: 1 },
+    97: { home: 3, away: 2 },
+    98: { home: 2, away: 2 },
+    99: { home: 3, away: 2 },
+    100: { home: 3, away: 1 },
   },
   "Nils": {
     73: { home: 1, away: 3 },
@@ -1239,6 +1263,10 @@ const submittedKnockoutPredictions = {
     94: { home: 2, away: 1 },
     95: { home: 3, away: 2 },
     96: { home: 1, away: 1 },
+    97: { home: 1, away: 2 },
+    98: { home: 2, away: 0 },
+    99: { home: 2, away: 1 },
+    100: { home: 0, away: 0 },
   },
 };
 const emptyKnockoutPredictions = Object.fromEntries(knockoutMatches.map((match) => [match.number, null]));
