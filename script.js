@@ -1071,6 +1071,8 @@ const submittedKnockoutPredictions = {
     100: { home: 2, away: 0 },
     101: { home: 3, away: 1 },
     102: { home: 2, away: 1 },
+    103: { home: 0, away: 0 },
+    104: { home: 0, away: 0 },
   },
   "Rasmus": {
     73: { home: 1, away: 3 },
@@ -1103,6 +1105,8 @@ const submittedKnockoutPredictions = {
     100: { home: 2, away: 0 },
     101: { home: 3, away: 1 },
     102: { home: 1, away: 1 },
+    103: { home: 2, away: 1 },
+    104: { home: 3, away: 2 },
   },
   "Måns": {
     73: { home: 2, away: 1 },
@@ -1135,6 +1139,8 @@ const submittedKnockoutPredictions = {
     100: { home: 1, away: 0 },
     101: { home: 2, away: 0 },
     102: { home: 2, away: 0 },
+    103: { home: 0, away: 2 },
+    104: { home: 1, away: 1 },
   },
   "Fredrik": {
     73: { home: 2, away: 1 },
@@ -1167,6 +1173,8 @@ const submittedKnockoutPredictions = {
     100: { home: 2, away: 2 },
     101: { home: 1, away: 1 },
     102: { home: 2, away: 1 },
+    103: { home: 2, away: 1 },
+    104: { home: 2, away: 1 },
   },
   "Anders": {
     73: { home: 1, away: 2 },
@@ -1199,6 +1207,8 @@ const submittedKnockoutPredictions = {
     100: { home: 0, away: 0 },
     101: { home: 1, away: 0 },
     102: { home: 1, away: 1 },
+    103: { home: 2, away: 1 },
+    104: { home: 1, away: 0 },
   },
   "Axel": {
     73: { home: 1, away: 1 },
@@ -1249,6 +1259,8 @@ const submittedKnockoutPredictions = {
     100: { home: 3, away: 1 },
     101: { home: 2, away: 1 },
     102: { home: 2, away: 2 },
+    103: { home: 3, away: 1 },
+    104: { home: 3, away: 2 },
   },
   "Nils": {
     73: { home: 1, away: 3 },
@@ -1281,6 +1293,8 @@ const submittedKnockoutPredictions = {
     100: { home: 0, away: 0 },
     101: { home: 1, away: 3 },
     102: { home: 2, away: 1 },
+    103: { home: 3, away: 1 },
+    104: { home: 2, away: 0 },
   },
 };
 const emptyKnockoutPredictions = Object.fromEntries(knockoutMatches.map((match) => [match.number, null]));
@@ -1289,7 +1303,7 @@ const knockoutPredictions = Object.fromEntries(
 );
 
 window.vmTipsDebug = {
-  dataVersion: "20260704-debug-round16-picks",
+  dataVersion: "20260718-final-bronze-picks",
   pick(player, matchNumber) {
     return knockoutPredictions[player]?.[Number(matchNumber)] || null;
   },
